@@ -147,6 +147,23 @@ matrix operator-=(matrix &M, float n) {
   return M;
 }
 
+matrix operator*(matrix const &M, matrix const &C){
+  std::pair<uint32_t, uint32_t> M_size{M.n, M.m};
+  std::pair<uint32_t, uint32_t> C_size{C.n, C.m};
+
+  if (M_size != C_size){
+    std::cerr << "Hadamard product unable matrix shape not valid\n";
+    exit(1);
+  }
+
+  matrix A = M;
+  for (uint32_t i=0; i<M.mat.size(); i++) {
+    A.mat[i] *= C.mat[i];
+  }
+  return A;
+}
+
+
 std::ostream &operator<<(std::ostream &out, matrix const &M) {
   out << "[";
   for (uint32_t i = 0; i < M.mat.size(); i++) {

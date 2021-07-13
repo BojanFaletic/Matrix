@@ -33,3 +33,6 @@ matrix operator*=(matrix &M, float n);
 matrix operator/=(matrix &M, float n);
 matrix operator+=(matrix &M, float n);
 matrix operator-=(matrix &M, float n);
+
+// operation on matrix
+matrix operator*(matrix const &M, matrix const &C);
