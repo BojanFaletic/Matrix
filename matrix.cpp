@@ -2,7 +2,6 @@
 #include <iostream>
 #include <sstream>
 
-
 float matrix::el(int y, int x) const {
   int i = (is_transposed) ? x * n + y : y * m + x;
   return mat[i];
@@ -28,13 +27,11 @@ matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
 }
 
 matrix matrix::T() {
-  is_transposed ^= 1;
-
-  // swap y,x axis
-  uint32_t tmp = n;
-  n = m;
-  m = tmp;
-  return *this;
+  matrix M = *this;
+  M.is_transposed ^= 1;
+  M.n = m;
+  M.m = n;
+  return M;
 }
 
 matrix matrix::dot(matrix const &b) {
@@ -64,7 +61,92 @@ matrix matrix::dot(matrix const &b) {
   return out;
 }
 
-// for printing
+matrix matrix::zeros(int y, int x) {
+  matrix M;
+  M.mat.clear();
+  M.mat.reserve(y * x);
+
+  M.n = y;
+  M.m = x;
+  for (int i = 0; i < x * y; i++) {
+    M.mat.push_back(0);
+  }
+  return M;
+}
+
+matrix matrix::ones(int y, int x) {
+  matrix M;
+  M.mat.clear();
+  M.mat.reserve(y * x);
+
+  M.n = y;
+  M.m = x;
+  for (int i = 0; i < x * y; i++) {
+    M.mat.push_back(1);
+  }
+  return M;
+}
+
+matrix operator*(matrix const &M, float n) {
+  matrix A = M;
+  for (float &el : A.mat) {
+    el *= n;
+  }
+  return A;
+}
+
+matrix operator*=(matrix &M, float n) {
+  for (float &el : M.mat) {
+    el *= n;
+  }
+  return M;
+}
+
+matrix operator/=(matrix &M, float n) {
+  for (float &el : M.mat) {
+    el /= n;
+  }
+  return M;
+}
+
+matrix operator/(matrix const &M, float n) {
+  matrix A = M;
+  for (float &el : A.mat) {
+    el /= n;
+  }
+  return A;
+}
+
+matrix operator-(matrix const &M, float n) {
+  matrix A = M;
+  for (float &el : A.mat) {
+    el -= n;
+  }
+  return A;
+}
+
+matrix operator+(matrix const &M, float n) {
+  matrix A = M;
+  for (float &el : A.mat) {
+    el += n;
+  }
+  return A;
+}
+
+matrix operator+=(matrix &M, float n) {
+  for (float &el : M.mat) {
+    el += n;
+  }
+  return M;
+}
+
+matrix operator-=(matrix &M, float n) {
+  for (float &el : M.mat) {
+    el -= n;
+  }
+  return M;
+}
+
 std::ostream &operator<<(std::ostream &out, matrix const &M) {
   out << "[";
   for (uint32_t i = 0; i < M.mat.size(); i++) {

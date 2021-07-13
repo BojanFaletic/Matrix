@@ -18,6 +18,18 @@ public:
 
   matrix T();
   matrix dot(matrix const &b);
+  static matrix zeros(int y, int x);
+  static matrix ones(int y, int x);
 };
 
 std::ostream &operator<<(std::ostream &out, matrix const &M);
+
+// scalar operators on matrix
+matrix operator*(matrix const &M, float n);
+matrix operator/(matrix const &M, float n);
+matrix operator+(matrix const &M, float n);
+matrix operator-(matrix const &M, float n);
+matrix operator*=(matrix &M, float n);
+matrix operator/=(matrix &M, float n);
+matrix operator+=(matrix &M, float n);
+matrix operator-=(matrix &M, float n);
