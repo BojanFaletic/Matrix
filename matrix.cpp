@@ -7,7 +7,7 @@ class matrix {
   std::vector<float> mat;
 
   float idx(int y, int x) {
-    int i = (is_transposed) ? x * n + y : y * m + x;
+    int i = (is_transposed) ? x * m + y : y * m + x;
     return mat[i];
   }
 
@@ -27,19 +27,25 @@ public:
 
   void print() {
     std::cout << "[";
+    int end = (is_transposed) ? n : m;
+
     for (uint32_t i = 0; i < mat.size(); i++) {
-      if (i % m == 0) {
+      if (i % end == 0) {
         std::cout << ((i == 0) ? "[ " : " [ ");
       }
-      int y = i / m;
-      int x = i % m;
+      int y = i / end;
+      int x = i % end;
       std::cout << idx(y, x) << " ";
 
-      if (i % m == m - 1) {
+      if (i % end == end - 1) {
         std::cout << ((i == mat.size()-1) ? "]" : "]\n");
       }
     }
     std::cout << "]\n";
+  }
+
+  void T(){
+    is_transposed ^= 1;
   }
 };
 
@@ -48,6 +54,10 @@ int main() {
   // tests
   std::vector<std::vector<float>> m{{1, 2, 3}, {4,5, 6}};
   matrix mm(m);
+
+  mm.print();
+
+  mm.T();
 
   mm.print();
 
