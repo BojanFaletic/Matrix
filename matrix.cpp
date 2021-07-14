@@ -11,6 +11,7 @@ matrix::matrix() {
   n = 0;
   m = 0;
   is_transposed = false;
+  mat = nullptr;
 }
 
 matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
@@ -18,10 +19,11 @@ matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
   m = in_mat[0].size();
   is_transposed = false;
 
-  mat.reserve(n * m);
+  mat = new float[n * m];
+  uint32_t it = 0;
   for (std::vector<float> const &v : in_mat) {
     for (float e : v) {
-      mat.push_back(e);
+      mat[it++] = e;
     }
   }
 }
@@ -47,7 +49,8 @@ matrix matrix::dot(matrix const &b) {
   matrix out;
   out.n = n;
   out.m = m;
-  out.mat.reserve(n * m);
+  out.mat = new float[n * m];
+  uint32_t it = 0;
 
   for (uint32_t i = 0; i < a.n; i++) {
     for (uint32_t j = 0; j < b.m; j++) {
@@ -55,7 +58,7 @@ matrix matrix::dot(matrix const &b) {
       for (uint32_t k = 0; k < a.m; k++) {
         accum += a.el(i, k) * b.el(k, j);
       }
-      out.mat.push_back(accum);
+      out.mat[it++] = accum;
     }
   }
   return out;
@@ -63,110 +66,107 @@ matrix matrix::dot(matrix const &b) {
 
 matrix matrix::zeros(int y, int x) {
   matrix M;
-  M.mat.clear();
-  M.mat.reserve(y * x);
+  M.mat = new float[y * x];
 
   M.n = y;
   M.m = x;
   for (int i = 0; i < x * y; i++) {
-    M.mat.push_back(0);
+    M.mat[i] = 0;
   }
   return M;
 }
 
 matrix matrix::ones(int y, int x) {
   matrix M;
-  M.mat.clear();
-  M.mat.reserve(y * x);
+  M.mat = new float[y * x];
 
   M.n = y;
   M.m = x;
   for (int i = 0; i < x * y; i++) {
-    M.mat.push_back(1);
+    M.mat[i] = 1;
   }
   return M;
 }
 
 matrix operator*(matrix const &M, float n) {
   matrix A = M;
-  for (float &el : A.mat) {
-    el *= n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    A.mat[i] *= n;
   }
   return A;
 }
 
 matrix operator*=(matrix &M, float n) {
-  for (float &el : M.mat) {
-    el *= n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    M.mat[i] *= n;
   }
   return M;
 }
 
 matrix operator/=(matrix &M, float n) {
-  for (float &el : M.mat) {
-    el /= n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    M.mat[i] /= n;
   }
   return M;
 }
 
 matrix operator/(matrix const &M, float n) {
   matrix A = M;
-  for (float &el : A.mat) {
-    el /= n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    A.mat[i] /= n;
   }
   return A;
 }
 
 matrix operator-(matrix const &M, float n) {
   matrix A = M;
-  for (float &el : A.mat) {
-    el -= n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    A.mat[i] -= n;
   }
   return A;
 }
 
 matrix operator+(matrix const &M, float n) {
   matrix A = M;
-  for (float &el : A.mat) {
-    el += n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    A.mat[i] += n;
   }
   return A;
 }
 
 matrix operator+=(matrix &M, float n) {
-  for (float &el : M.mat) {
-    el += n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    M.mat[i] += n;
   }
   return M;
 }
 
 matrix operator-=(matrix &M, float n) {
-  for (float &el : M.mat) {
-    el -= n;
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
+    M.mat[i] -= n;
   }
   return M;
 }
 
-matrix operator*(matrix const &M, matrix const &C){
+matrix operator*(matrix const &M, matrix const &C) {
   std::pair<uint32_t, uint32_t> M_size{M.n, M.m};
   std::pair<uint32_t, uint32_t> C_size{C.n, C.m};
 
-  if (M_size != C_size){
+  if (M_size != C_size) {
     std::cerr << "Hadamard product unable matrix shape not valid\n";
     exit(1);
   }
 
   matrix A = M;
-  for (uint32_t i=0; i<M.mat.size(); i++) {
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
     A.mat[i] *= C.mat[i];
   }
   return A;
 }
 
-
 std::ostream &operator<<(std::ostream &out, matrix const &M) {
   out << "[";
-  for (uint32_t i = 0; i < M.mat.size(); i++) {
+  for (uint32_t i = 0; i < M.n * M.m; i++) {
     if (i % M.m == 0) {
       out << ((i == 0) ? "[ " : " [ ");
     }
@@ -175,7 +175,7 @@ std::ostream &operator<<(std::ostream &out, matrix const &M) {
     out << M.el(y, x) << " ";
 
     if (i % M.m == M.m - 1) {
-      out << ((i == M.mat.size() - 1) ? "]" : "]\n");
+      out << ((i == M.n * M.m - 1) ? "]" : "]\n");
     }
   }
   out << "]\n";

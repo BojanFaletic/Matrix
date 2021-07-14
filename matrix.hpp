@@ -8,7 +8,7 @@ class matrix {
 public:
   uint32_t n, m;
   bool is_transposed;
-  std::vector<float> mat;
+  float *mat;
 
   float el(int y, int x) const;
 
