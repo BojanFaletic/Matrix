@@ -1,10 +1,14 @@
 .PHONY:clean
+CC=clang++
+CFLAGS:=-O2 -march=haswell -std=c++20 -Wall -Wextra -fno-exceptions
+LDFLAGS:=
 
 # find all sources in src folder
 SRCS=$(wildcard src/*.cpp)
 
-matrix: $(SRCS)
-	clang++ -Iheader test.cpp $^ -o $@ -Wall -Wextra -O2 -march=haswell
+
+matrix: test.cpp $(SRCS)
+	clang++ $(CFLAGS) -Iheader $^ -o $@
 
 clean:
 	rm -f matrix

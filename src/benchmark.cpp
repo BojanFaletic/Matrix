@@ -1,14 +1,12 @@
 #include "benchmark.hpp"
 
-using nano_s = std::chrono::nanoseconds;
-using time_s = std::chrono::high_resolution_clock;
-#define N_TIMES 1024
-
 template <typename T> uint32_t time_diff(T F) {
+  using nano_s = std::chrono::nanoseconds;
+  using time_s = std::chrono::high_resolution_clock;
+  constexpr uint32_t N_TIMES = 64;
   uint64_t avg_time = 0;
 
-  volatile int i;
-  for (i = 0; i < N_TIMES; i++) {
+  for (uint32_t i = 0; i < N_TIMES; i++) {
     auto t1 = time_s::now();
     volatile auto out = F();
     auto t2 = time_s::now();
