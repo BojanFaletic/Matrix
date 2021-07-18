@@ -20,6 +20,8 @@ public:
   matrix dot(matrix const &b);
   static matrix zeros(int y, int x);
   static matrix ones(int y, int x);
+  float &operator()(uint32_t const n, uint32_t const m);
+  float operator()(uint32_t const n, uint32_t const m) const;
 };
 
 std::ostream &operator<<(std::ostream &out, matrix const &M);

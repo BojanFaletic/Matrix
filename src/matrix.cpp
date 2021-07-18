@@ -52,6 +52,7 @@ matrix matrix::dot(matrix const &b) {
   out.mat = new float[n * m];
   uint32_t it = 0;
 
+  // transpose this matrix in order to align rows
   for (uint32_t i = 0; i < a.n; i++) {
     for (uint32_t j = 0; j < b.m; j++) {
       float accum = 0;
@@ -162,6 +163,14 @@ matrix operator*(matrix const &M, matrix const &C) {
     A.mat[i] *= C.mat[i];
   }
   return A;
+}
+
+float &matrix::operator()(uint32_t const n, uint32_t const m) {
+  return mat[n * this->m + m];
+}
+
+float matrix::operator()(uint32_t const n, uint32_t const m) const {
+  return mat[n * this->m + m];
 }
 
 std::ostream &operator<<(std::ostream &out, matrix const &M) {
