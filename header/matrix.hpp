@@ -7,13 +7,14 @@
 class matrix {
 public:
   uint32_t n, m;
-  bool is_transposed;
   float *mat;
 
   float el(int y, int x) const;
 
 public:
   matrix();
+  matrix(matrix const &m);
+  ~matrix();
   matrix(std::vector<std::vector<float>> const &in_mat);
 
   matrix T();

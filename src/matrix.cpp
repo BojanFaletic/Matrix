@@ -3,21 +3,30 @@
 #include <sstream>
 
 float matrix::el(int y, int x) const {
-  int i = (is_transposed) ? x * n + y : y * m + x;
+  int i = y * m + x;
   return mat[i];
 }
 
 matrix::matrix() {
   n = 0;
   m = 0;
-  is_transposed = false;
   mat = nullptr;
 }
+
+matrix::matrix(matrix const &m){
+  mat = new float[m.m * m.n];
+  for (uint32_t i=0; i<m.n * m.m; i++){
+    this->mat[i] = m.mat[i];
+  }
+  this->m = m.m;
+  n = m.n;
+}
+
+matrix::~matrix() { delete[] mat; }
 
 matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
   n = in_mat.size();
   m = in_mat[0].size();
-  is_transposed = false;
 
   mat = new float[n * m];
   uint32_t it = 0;
@@ -29,8 +38,7 @@ matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
 }
 
 matrix matrix::T() {
-  matrix M = *this;
-  M.is_transposed ^= 1;
+  matrix M(*this);
   M.n = m;
   M.m = n;
   return M;
@@ -52,7 +60,6 @@ matrix matrix::dot(matrix const &b) {
   out.mat = new float[n * m];
   uint32_t it = 0;
 
-  // transpose this matrix in order to align rows
   for (uint32_t i = 0; i < a.n; i++) {
     for (uint32_t j = 0; j < b.m; j++) {
       float accum = 0;
@@ -89,6 +96,9 @@ matrix matrix::ones(int y, int x) {
   return M;
 }
 
+/******************************************************************************/
+/***************************** Operators **************************************/
+/******************************************************************************/
 matrix operator*(matrix const &M, float n) {
   matrix A = M;
   for (uint32_t i = 0; i < M.n * M.m; i++) {
