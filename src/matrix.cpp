@@ -2,9 +2,18 @@
 #include <iostream>
 #include <sstream>
 
-float matrix::el(int y, int x) const {
-  int i = y * m + x;
+float matrix::el(uint32_t y, uint32_t x) const {
+  uint32_t i = y * m + x;
   return mat[i];
+}
+
+void matrix::size(uint32_t y, uint32_t x){
+  n = y;
+  m = x;
+}
+
+uint32_t matrix::size() const {
+  return m*n;
 }
 
 matrix::matrix() {
@@ -14,21 +23,19 @@ matrix::matrix() {
 }
 
 matrix::matrix(matrix const &m) {
-  mat = new float[m.m * m.n];
-  for (uint32_t i = 0; i < m.n * m.m; i++) {
+  this->size(m.n, m.m);
+  mat = new float[size()];
+  for (uint32_t i = 0; i < m.size(); i++) {
     this->mat[i] = m.mat[i];
   }
-  this->m = m.m;
-  n = m.n;
 }
 
 matrix::~matrix() { delete[] mat; }
 
 matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
-  n = in_mat.size();
-  m = in_mat[0].size();
+  this->size(in_mat.size(), in_mat[0].size());
 
-  mat = new float[n * m];
+  mat = new float[size()];
   uint32_t it = 0;
   for (std::vector<float> const &v : in_mat) {
     for (float e : v) {
@@ -39,8 +46,7 @@ matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
 
 matrix matrix::T() {
   matrix M(*this);
-  M.n = m;
-  M.m = n;
+  M.size(m, n);
   return M;
 }
 
@@ -55,11 +61,10 @@ matrix matrix::dot(matrix const &b) {
   uint32_t m = b.m;
 
   matrix out;
-  out.n = n;
-  out.m = m;
-  out.mat = new float[n * m];
-  uint32_t it = 0;
+  out.size(n, m);
+  out.mat = new float[out.size()];
 
+  uint32_t it = 0;
   for (uint32_t i = 0; i < a.n; i++) {
     for (uint32_t j = 0; j < b.m; j++) {
       float accum = 0;
@@ -85,9 +90,8 @@ matrix matrix::dot_sparse(matrix const &b) {
   uint32_t depth = a.m;
 
   matrix out;
-  out.n = height;
-  out.m = width;
-  out.mat = new float[height * width];
+  out.size(height, width);
+  out.mat = new float[out.size()];
 
   for (uint32_t k = 0; k < height; k++) {
     float *accum = out.mat + k * width;
@@ -109,10 +113,9 @@ matrix matrix::dot_sparse(matrix const &b) {
 
 matrix matrix::zeros(int y, int x) {
   matrix M;
-  M.mat = new float[y * x];
+  M.size(y, x);
+  M.mat = new float[M.size()];
 
-  M.n = y;
-  M.m = x;
   for (int i = 0; i < x * y; i++) {
     M.mat[i] = 0;
   }
@@ -121,7 +124,8 @@ matrix matrix::zeros(int y, int x) {
 
 matrix matrix::ones(int y, int x) {
   matrix M;
-  M.mat = new float[y * x];
+  M.size(y,x);
+  M.mat = new float[M.size()];
 
   M.n = y;
   M.m = x;

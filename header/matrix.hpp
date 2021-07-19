@@ -9,7 +9,8 @@ public:
   uint32_t n, m;
   float *mat;
 
-  float el(int y, int x) const;
+  float el(uint32_t y, uint32_t x) const;
+  void size(uint32_t y, uint32_t x);
 
 public:
   matrix();
@@ -24,6 +25,7 @@ public:
   static matrix ones(int y, int x);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
+  uint32_t size() const;
 };
 
 std::ostream &operator<<(std::ostream &out, matrix const &M);
