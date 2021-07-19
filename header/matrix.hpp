@@ -19,6 +19,7 @@ public:
 
   matrix T();
   matrix dot(matrix const &b);
+  matrix dot_sparse(matrix const &b);
   static matrix zeros(int y, int x);
   static matrix ones(int y, int x);
   float &operator()(uint32_t const n, uint32_t const m);

@@ -13,9 +13,9 @@ matrix::matrix() {
   mat = nullptr;
 }
 
-matrix::matrix(matrix const &m){
+matrix::matrix(matrix const &m) {
   mat = new float[m.m * m.n];
-  for (uint32_t i=0; i<m.n * m.m; i++){
+  for (uint32_t i = 0; i < m.n * m.m; i++) {
     this->mat[i] = m.mat[i];
   }
   this->m = m.m;
@@ -64,11 +64,46 @@ matrix matrix::dot(matrix const &b) {
     for (uint32_t j = 0; j < b.m; j++) {
       float accum = 0;
       for (uint32_t k = 0; k < a.m; k++) {
-        accum += a.el(i, k) * b.el(k, j);
+        accum += a(i, k) * b(k, j);
       }
       out.mat[it++] = accum;
     }
   }
+  return out;
+}
+
+matrix matrix::dot_sparse(matrix const &b) {
+  matrix const &a = *this;
+  constexpr float approx_zero = 1e-8;
+  if (a.m != b.n) {
+    std::cerr << "Matrix shape not compatible\n";
+    exit(1);
+  }
+
+  uint32_t width = b.m;
+  uint32_t height = a.n;
+  uint32_t depth = a.m;
+
+  matrix out;
+  out.n = height;
+  out.m = width;
+  out.mat = new float[height * width];
+
+  for (uint32_t k = 0; k < height; k++) {
+    float *accum = out.mat + k * width;
+    for (uint32_t i = 0; i < width; i++) {
+      accum[i] = 0;
+    }
+    for (uint32_t j = 0; j < depth; j++) {
+      if (std::abs(a(k, j)) > approx_zero) {
+        // vectorization goes here
+        for (uint32_t i = 0; i < width; i++) {
+          accum[i] += a(k, j) * b(j, i);
+        }
+      }
+    }
+  }
+
   return out;
 }
 

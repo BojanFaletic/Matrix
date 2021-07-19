@@ -7,3 +7,4 @@
 
 template <typename T> uint32_t time_diff(T F);
 void benchmark(matrix m1);
+void benchmark(matrix m1, matrix m2);
