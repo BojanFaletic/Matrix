@@ -1,5 +1,6 @@
 #include "matrix.hpp"
 #include <iostream>
+#include <random>
 #include <sstream>
 
 float matrix::el(uint32_t y, uint32_t x) const {
@@ -7,14 +8,12 @@ float matrix::el(uint32_t y, uint32_t x) const {
   return mat[i];
 }
 
-void matrix::size(uint32_t y, uint32_t x){
+void matrix::size(uint32_t y, uint32_t x) {
   n = y;
   m = x;
 }
 
-uint32_t matrix::size() const {
-  return m*n;
-}
+uint32_t matrix::size() const { return m * n; }
 
 matrix::matrix() {
   n = 0;
@@ -111,26 +110,36 @@ matrix matrix::dot_sparse(matrix const &b) {
   return out;
 }
 
-matrix matrix::zeros(int y, int x) {
+matrix matrix::zeros(uint32_t y, uint32_t x) {
   matrix M;
   M.size(y, x);
   M.mat = new float[M.size()];
 
-  for (int i = 0; i < x * y; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] = 0;
   }
   return M;
 }
 
-matrix matrix::ones(int y, int x) {
+matrix matrix::ones(uint32_t y, uint32_t x) {
   matrix M;
-  M.size(y,x);
+  M.size(y, x);
   M.mat = new float[M.size()];
 
-  M.n = y;
-  M.m = x;
-  for (int i = 0; i < x * y; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] = 1;
+  }
+  return M;
+}
+
+matrix matrix::random(uint32_t y, uint32_t x) {
+  constexpr uint32_t max_number = 1e8;
+  matrix M;
+  M.size(y, x);
+  M.mat = new float[M.size()];
+
+  for (uint32_t i = 0; i < M.size(); i++) {
+    M.mat[i] = (double)(rand() % max_number) / max_number;
   }
   return M;
 }

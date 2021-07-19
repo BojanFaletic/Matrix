@@ -21,8 +21,9 @@ public:
   matrix T();
   matrix dot(matrix const &b);
   matrix dot_sparse(matrix const &b);
-  static matrix zeros(int y, int x);
-  static matrix ones(int y, int x);
+  static matrix zeros(uint32_t y, uint32_t x);
+  static matrix ones(uint32_t y, uint32_t x);
+  static matrix random(uint32_t y, uint32_t x);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
   uint32_t size() const;
