@@ -1,4 +1,5 @@
 #include "matrix3.hpp"
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -172,16 +173,23 @@ float matrix3::operator()(uint32_t const n, uint32_t const m,
 }
 
 std::ostream &operator<<(std::ostream &out, matrix3 const &M) {
-  for (uint32_t z = 0; z < M.z; z++) {
-    out << "[";
+  out << std::setprecision(2);
+  out << "[";
+  for (uint32_t m = 0; m < M.m; m++) {
+    out << ((m == 0) ? "[" : " [");
     for (uint32_t n = 0; n < M.n; n++) {
-      out << "[ ";
-      for (uint32_t m = 0; m < M.m; m++) {
-        out << M(n, m, z) << " ";
+      out << ((n == 0) ? "[" : "  [");
+      for (uint32_t z = 0; z < M.z; z++) {
+        out << M(m,n,z) << " ";
       }
-      out << "]\n";
+      if (n == M.n-1 && m == M.m-1){
+        out << "]]]\n";
+        return out;
+      }
+      out << ((n == M.n-1) ? "]" : "]\n");
     }
     out << "]\n";
   }
+  out << "]\n";
   return out;
 }
