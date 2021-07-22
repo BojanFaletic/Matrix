@@ -81,21 +81,21 @@ matrix3 matrix3::random(uint32_t y, uint32_t x, uint32_t z) {
 /******************************************************************************/
 matrix3 operator*(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     A.mat[i] *= n;
   }
   return A;
 }
 
 matrix3 operator*=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] *= n;
   }
   return M;
 }
 
 matrix3 operator/=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] /= n;
   }
   return M;
@@ -103,7 +103,7 @@ matrix3 operator/=(matrix3 &M, float n) {
 
 matrix3 operator/(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     A.mat[i] /= n;
   }
   return A;
@@ -111,7 +111,7 @@ matrix3 operator/(matrix3 const &M, float n) {
 
 matrix3 operator-(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     A.mat[i] -= n;
   }
   return A;
@@ -119,21 +119,21 @@ matrix3 operator-(matrix3 const &M, float n) {
 
 matrix3 operator+(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     A.mat[i] += n;
   }
   return A;
 }
 
 matrix3 operator+=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] += n;
   }
   return M;
 }
 
 matrix3 operator-=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.n * M.m; i++) {
+  for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] -= n;
   }
   return M;
@@ -174,9 +174,9 @@ float matrix3::operator()(uint32_t const n, uint32_t const m,
 std::ostream &operator<<(std::ostream &out, matrix3 const &M) {
   for (uint32_t z = 0; z < M.z; z++) {
     out << "[";
-    for (uint32_t n = 0; n < M.n * M.n; n++) {
+    for (uint32_t n = 0; n < M.n; n++) {
       out << "[ ";
-      for (uint32_t m = 0; m < M.m * M.m; m++) {
+      for (uint32_t m = 0; m < M.m; m++) {
         out << M(n, m, z) << " ";
       }
       out << "]\n";
