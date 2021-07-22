@@ -21,6 +21,11 @@ matrix::matrix() {
   mat = nullptr;
 }
 
+matrix::matrix(float *data, uint32_t n, uint32_t m) {
+  mat = data;
+  this->size(n, m);
+}
+
 matrix::matrix(matrix const &m) {
   this->size(m.n, m.m);
   mat = new float[size()];
@@ -219,6 +224,18 @@ matrix operator*(matrix const &M, matrix const &C) {
   matrix A = M;
   for (uint32_t i = 0; i < M.n * M.m; i++) {
     A.mat[i] *= C.mat[i];
+  }
+  return A;
+}
+
+matrix operator+(matrix const &M, matrix const &m) {
+  if (M.n != m.n || M.m != m.m) {
+    std::cerr << "Cannot add matrix of different shape\n";
+    exit(1);
+  }
+  matrix A = M;
+  for (uint32_t i = 0; i < M.size(); i++) {
+    A.mat[i] = M.mat[i] + m.mat[i];
   }
   return A;
 }

@@ -17,6 +17,7 @@ public:
   matrix(matrix const &m);
   ~matrix();
   matrix(std::vector<std::vector<float>> const &in_mat);
+  matrix(float *data, uint32_t n, uint32_t m);
 
   matrix T();
   matrix dot(matrix const &b);
@@ -43,3 +44,4 @@ matrix operator-=(matrix &M, float n);
 
 // operation on matrix
 matrix operator*(matrix const &M, matrix const &C);
+matrix operator+(matrix const &M, matrix const &m);
