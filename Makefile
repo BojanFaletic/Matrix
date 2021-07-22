@@ -1,4 +1,4 @@
-.PHONY:clean, test
+.PHONY:clean
 CC=clang++
 
 # With this flag you can passs extra arguments for example debug (-g)
@@ -9,13 +9,23 @@ LDFLAGS:=
 
 # find all sources in src folder
 SRCS=$(wildcard src/*.cpp)
+OBJS=$(patsubst src/%.cpp, obj/%.o, $(SRCS))
 
+all: obj test
 
-matrix: test.cpp $(SRCS)
-	$(CC) $(CFLAGS) -Iheader $^ -o $@
+# build exectuable
+test: $(OBJS) test.cpp
+	$(CC) -Iheader $^ $(LDFLAGS) -o $@
 
-test: test.cpp $(SRCS)
-	$(CC) $(CFLAGS) -Iheader $^ -o $@
+# build all objects
+$(OBJS) : obj/%.o : src/%.cpp
+	$(CC) $(CFLAGS) -Iheader $< -o $@ -c
 
+# directory used for storing object files
+obj:
+	@mkdir -p obj
+
+# clean intermidiate files
 clean:
-	rm -f matrix
+	rm obj/*.o
+	rm -f test
