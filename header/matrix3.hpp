@@ -10,6 +10,7 @@ public:
   float *mat;
 
   void size(uint32_t y, uint32_t x, uint32_t z);
+  uint32_t idx(uint32_t n, uint32_t m, uint32_t z) const;
 
 public:
   matrix3();

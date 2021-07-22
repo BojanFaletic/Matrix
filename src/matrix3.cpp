@@ -1,4 +1,5 @@
 #include "matrix3.hpp"
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <random>
@@ -8,6 +9,12 @@ void matrix3::size(uint32_t y, uint32_t x, uint32_t z) {
   this->n = y;
   this->m = x;
   this->z = z;
+}
+
+uint32_t matrix3::idx(uint32_t n, uint32_t m, uint32_t z) const {
+  uint32_t layer = n * this->m + m;
+  uint32_t i = layer * z;
+  return i;
 }
 
 uint32_t matrix3::size() const { return m * n * z; }
@@ -22,9 +29,8 @@ matrix3::matrix3() {
 matrix3::matrix3(matrix3 const &m) {
   this->size(m.n, m.m, m.z);
   mat = new float[size()];
-  for (uint32_t i = 0; i < m.size(); i++) {
-    this->mat[i] = m.mat[i];
-  }
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
 matrix3::~matrix3() { delete[] mat; }
@@ -48,9 +54,7 @@ matrix3 matrix3::zeros(uint32_t y, uint32_t x, uint32_t z) {
   M.size(y, x, z);
   M.mat = new float[M.size()];
 
-  for (uint32_t i = 0; i < M.size(); i++) {
-    M.mat[i] = 0;
-  }
+  std::for_each(M.mat, M.mat + M.size(), [](float &f) { f = 0; });
   return M;
 }
 
@@ -59,9 +63,7 @@ matrix3 matrix3::ones(uint32_t y, uint32_t x, uint32_t z) {
   M.size(y, x, z);
   M.mat = new float[M.size()];
 
-  for (uint32_t i = 0; i < M.size(); i++) {
-    M.mat[i] = 1;
-  }
+  std::for_each(M.mat, M.mat + M.size(), [](float &f) { f = 1; });
   return M;
 }
 
@@ -71,9 +73,11 @@ matrix3 matrix3::random(uint32_t y, uint32_t x, uint32_t z) {
   M.size(y, x, z);
   M.mat = new float[M.size()];
 
-  for (uint32_t i = 0; i < M.size(); i++) {
-    M.mat[i] = (double)(rand() % max_number) / max_number;
-  }
+  std::for_each(M.mat, M.mat + M.size(), [](float &f) {
+    f *= (double)(rand() % max_number) / max_number;
+    ;
+  });
+
   return M;
 }
 
@@ -82,94 +86,71 @@ matrix3 matrix3::random(uint32_t y, uint32_t x, uint32_t z) {
 /******************************************************************************/
 matrix3 operator*(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.size(); i++) {
-    A.mat[i] *= n;
-  }
+  std::for_each(A.mat, A.mat + A.size(), [&](float &f) { f *= n; });
   return A;
 }
 
 matrix3 operator*=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.size(); i++) {
-    M.mat[i] *= n;
-  }
+  std::for_each(M.mat, M.mat + M.size(), [&](float &f) { f *= n; });
   return M;
 }
 
 matrix3 operator/=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.size(); i++) {
-    M.mat[i] /= n;
-  }
+  std::for_each(M.mat, M.mat + M.size(), [&](float &f) { f /= n; });
   return M;
 }
 
 matrix3 operator/(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.size(); i++) {
-    A.mat[i] /= n;
-  }
+  std::for_each(A.mat, A.mat + A.size(), [&](float &f) { f /= n; });
   return A;
 }
 
 matrix3 operator-(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.size(); i++) {
-    A.mat[i] -= n;
-  }
+  std::for_each(A.mat, A.mat + A.size(), [&](float &f) { f -= n; });
   return A;
 }
 
 matrix3 operator+(matrix3 const &M, float n) {
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.size(); i++) {
-    A.mat[i] += n;
-  }
+  std::for_each(A.mat, A.mat + A.size(), [&](float &f) { f += n; });
   return A;
 }
 
 matrix3 operator+=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.size(); i++) {
-    M.mat[i] += n;
-  }
+  std::for_each(M.mat, M.mat + M.size(), [&](float &f) { f += n; });
   return M;
 }
 
 matrix3 operator-=(matrix3 &M, float n) {
-  for (uint32_t i = 0; i < M.size(); i++) {
-    M.mat[i] -= n;
-  }
+  std::for_each(M.mat, M.mat + M.size(), [&](float &f) { f -= n; });
   return M;
 }
 
 matrix3 operator*(matrix3 const &M, matrix3 const &C) {
-  uint32_t sz_A[3] = {M.n, M.m, M.z};
-  uint32_t sz_B[3] = {M.n, M.m, M.z};
+  std::array<uint32_t, 3> sz_A{M.n, M.m, M.z};
+  std::array<uint32_t, 3> sz_B{M.n, M.m, M.z};
 
-  for (uint32_t i = 0; i < 3; i++) {
-    if (sz_A[i] != sz_B[i]) {
-      std::cerr << "Hadamard product unable matrix3 shape not valid\n";
-      exit(1);
-    }
+  if (sz_A != sz_B) {
+    std::cerr << "Hadamard product unable matrix3 shape not valid\n";
+    exit(1);
   }
 
   matrix3 A = M;
-  for (uint32_t i = 0; i < M.size(); i++) {
-    A.mat[i] *= C.mat[i];
-  }
+  uint32_t idx = 0;
+  std::for_each(A.mat, A.mat + A.size(), [&](float &f) { f *= C.mat[idx++]; });
   return A;
 }
 
 float &matrix3::operator()(uint32_t const n, uint32_t const m,
                            uint32_t const z) {
-  uint32_t layer = n * this->m + m;
-  uint32_t i = layer * z;
-  return mat[i];
+  return mat[idx(n, m, z)];
 }
 
 float matrix3::operator()(uint32_t const n, uint32_t const m,
                           uint32_t const z) const {
-  uint32_t layer = n * this->m + m;
-  uint32_t i = layer * z;
-  return mat[i];
+  return mat[idx(n, m, z)];
 }
 
 std::ostream &operator<<(std::ostream &out, matrix3 const &M) {
@@ -180,13 +161,13 @@ std::ostream &operator<<(std::ostream &out, matrix3 const &M) {
     for (uint32_t n = 0; n < M.n; n++) {
       out << ((n == 0) ? "[" : "  [");
       for (uint32_t z = 0; z < M.z; z++) {
-        out << M(m,n,z) << " ";
+        out << M(m, n, z) << " ";
       }
-      if (n == M.n-1 && m == M.m-1){
+      if (n == M.n - 1 && m == M.m - 1) {
         out << "]]]\n";
         return out;
       }
-      out << ((n == M.n-1) ? "]" : "]\n");
+      out << ((n == M.n - 1) ? "]" : "]\n");
     }
     out << "]\n";
   }
