@@ -1,4 +1,4 @@
-.PHONY:clean
+.PHONY:clean, build_src
 CC=clang++
 
 # With this flag you can passs extra arguments for example debug (-g)
@@ -12,6 +12,9 @@ SRCS=$(wildcard src/*.cpp)
 OBJS=$(patsubst src/%.cpp, obj/%.o, $(SRCS))
 
 all: obj test
+
+#build objecets
+build_src: obj $(OBJS)
 
 # build exectuable
 test: $(OBJS) test.cpp
