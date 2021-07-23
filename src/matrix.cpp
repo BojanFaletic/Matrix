@@ -4,14 +4,14 @@
 #include <random>
 #include <sstream>
 
-float matrix::el(uint32_t y, uint32_t x) const {
-  uint32_t i = y * m + x;
-  return mat[i];
+uint32_t matrix::idx(uint32_t n, uint32_t m) const {
+  uint32_t i = n * this->m + m;
+  return i;
 }
 
-void matrix::size(uint32_t y, uint32_t x) {
-  n = y;
-  m = x;
+void matrix::size(uint32_t n, uint32_t m) {
+  this->n = n;
+  this->m = m;
 }
 
 uint32_t matrix::size() const { return m * n; }
@@ -242,11 +242,11 @@ matrix operator+(matrix const &M, matrix const &m) {
 }
 
 float &matrix::operator()(uint32_t const n, uint32_t const m) {
-  return mat[n * this->m + m];
+  return mat[idx(n, m)];
 }
 
 float matrix::operator()(uint32_t const n, uint32_t const m) const {
-  return mat[n * this->m + m];
+  return mat[idx(n, m)];
 }
 
 std::ostream &operator<<(std::ostream &out, matrix const &M) {
@@ -257,7 +257,7 @@ std::ostream &operator<<(std::ostream &out, matrix const &M) {
     }
     uint32_t y = i / M.m;
     uint32_t x = i % M.m;
-    out << M.el(y, x) << " ";
+    out << M(y, x) << " ";
 
     if (i % M.m == M.m - 1) {
       out << ((i == M.n * M.m - 1) ? "]" : "]\n");
