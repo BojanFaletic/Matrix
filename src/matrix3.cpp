@@ -36,7 +36,7 @@ matrix3::matrix3(matrix3 const &m) {
 matrix3::~matrix3() { delete[] mat; }
 
 matrix3::matrix3(std::vector<std::vector<std::vector<float>>> const &in_mat) {
-  this->size(in_mat.size(), in_mat[0].size(), in_mat[0].size());
+  this->size(in_mat.size(), in_mat[0].size(), in_mat[0][0].size());
 
   mat = new float[size()];
   uint32_t it = 0;
