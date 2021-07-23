@@ -135,8 +135,8 @@ matrix4 operator-=(matrix4 &M, float n) {
 }
 
 matrix4 operator*(matrix4 const &M, matrix4 const &C) {
-  std::array<uint32_t, 3> sz_A{M.n, M.m, M.z};
-  std::array<uint32_t, 3> sz_B{M.n, M.m, M.z};
+  std::array<uint32_t, 4> sz_A{M.n, M.m, M.z, M.y};
+  std::array<uint32_t, 4> sz_B{M.n, M.m, M.z, M.y};
 
   if (sz_A != sz_B) {
     std::cerr << "Hadamard product unable matrix4 shape not valid\n";

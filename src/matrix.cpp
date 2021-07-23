@@ -1,4 +1,5 @@
 #include "matrix.hpp"
+#include <array>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -213,10 +214,10 @@ matrix operator-=(matrix &M, float n) {
 }
 
 matrix operator*(matrix const &M, matrix const &C) {
-  std::pair<uint32_t, uint32_t> M_size{M.n, M.m};
-  std::pair<uint32_t, uint32_t> C_size{C.n, C.m};
+  std::array<uint32_t, 2> sz_A{M.n, M.m};
+  std::array<uint32_t, 2> sz_B{M.n, M.m};
 
-  if (M_size != C_size) {
+  if (sz_A != sz_B) {
     std::cerr << "Hadamard product unable matrix shape not valid\n";
     exit(1);
   }
