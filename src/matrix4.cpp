@@ -163,20 +163,21 @@ std::ostream &operator<<(std::ostream &out, matrix4 const &M) {
   out << std::setprecision(2);
   out << "[";
   for (uint32_t y = 0; y < M.y; y++) {
+    out << "[";
     for (uint32_t m = 0; m < M.m; m++) {
-      out << ((m == 0) ? "[" : " [");
+      out << ((m == 0) ? "[" : "  [");
       for (uint32_t n = 0; n < M.n; n++) {
-        out << ((n == 0) ? "[" : "  [");
+        out << ((n == 0) ? "[" : "   [");
         for (uint32_t z = 0; z < M.z; z++) {
           out << M(m, n, z, y) << " ";
         }
-        if (n == M.n - 1 && m == M.m - 1) {
+        if (n == M.n - 1 && m == M.m - 1 && y == M.y - 1) {
           out << "]]]\n";
           return out;
         }
         out << ((n == M.n - 1) ? "]" : "]\n");
       }
-      out << "]\n";
+      out << ((m == M.m - 1) ? "]" : "]\n");
     }
     out << "]\n";
   }
