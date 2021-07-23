@@ -1,5 +1,7 @@
 #pragma once
 
+#include "matrix.hpp"
+#include "matrix1.hpp"
 #include <sstream>
 #include <stdint.h>
 #include <vector>
@@ -21,6 +23,8 @@ public:
   static matrix3 zeros(uint32_t y, uint32_t x, uint32_t z);
   static matrix3 ones(uint32_t y, uint32_t x, uint32_t z);
   static matrix3 random(uint32_t y, uint32_t x, uint32_t z);
+  matrix1 flatten() const;
+  matrix squeeze(uint32_t dim) const;
   // take index of matrix
   float &operator()(uint32_t const n, uint32_t const m, const uint32_t z);
   float operator()(uint32_t const n, uint32_t const m, const uint32_t z) const;

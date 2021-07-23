@@ -67,6 +67,19 @@ matrix1 matrix1::random(uint32_t n) {
   return M;
 }
 
+matrix matrix1::unsqueeze(uint32_t dim) const{
+  matrix M;
+  if (dim == 0) {
+    M.size(1, this->n);
+  } else {
+    M.size(this->n, 1);
+  }
+  M.mat = new float[M.size()];
+  uint32_t idx = 0;
+  std::for_each(M.mat, M.mat + M.size(), [&](float &f) { f = mat[idx++]; });
+  return M;
+}
+
 /******************************************************************************/
 /***************************** Operators **************************************/
 /******************************************************************************/

@@ -3,6 +3,8 @@
 #include <sstream>
 #include <stdint.h>
 #include <vector>
+#include "matrix.hpp"
+
 
 class matrix1 {
 public:
@@ -21,6 +23,7 @@ public:
   static matrix1 zeros(uint32_t n);
   static matrix1 ones(uint32_t n);
   static matrix1 random(uint32_t n);
+  matrix unsqueeze(uint32_t dim) const;
   // take index of matrix
   float &operator()(uint32_t const n);
   float operator()(uint32_t const n) const;

@@ -81,6 +81,42 @@ matrix3 matrix3::random(uint32_t y, uint32_t x, uint32_t z) {
   return M;
 }
 
+matrix1 matrix3::flatten() const {
+  matrix1 M;
+  M.size(size());
+  M.mat = new float[M.size()];
+
+  uint32_t idx = 0;
+  for (uint32_t n = 0; n < this->n; n++) {
+    for (uint32_t m = 0; m < this->m; m++) {
+      for (uint32_t z = 0; z < this->z; z++) {
+        M.mat[idx++] = (*this)(n, m, z);
+      }
+    }
+  }
+  return M;
+}
+
+matrix matrix3::squeeze(uint32_t dim) const {
+  matrix M;
+  M.size(n, m * z);
+
+  if (dim != 0) {
+    std::cout << "not implemented\n;";
+    exit(1);
+  }
+
+  M.mat = new float[M.size()];
+  for (uint32_t n = 0; n < this->n; n++) {
+    for (uint32_t m = 0; m < this->m; m++) {
+      for (uint32_t z = 0; z < this->z; z++) {
+        M(n, m * z) = (*this)(n, m, z);
+      }
+    }
+  }
+  return M;
+};
+
 /******************************************************************************/
 /***************************** Operators **************************************/
 /******************************************************************************/
