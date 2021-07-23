@@ -23,7 +23,10 @@ matrix1::matrix1(matrix1 const &m) {
   std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
-matrix1::~matrix1() { delete[] mat; }
+matrix1::~matrix1() {
+  delete[] mat;
+  mat = nullptr;
+}
 
 matrix1::matrix1(std::vector<float> const &in_mat) {
   this->size(in_mat.size());

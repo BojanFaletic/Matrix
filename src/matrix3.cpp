@@ -33,7 +33,10 @@ matrix3::matrix3(matrix3 const &m) {
   std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
-matrix3::~matrix3() { delete[] mat; }
+matrix3::~matrix3() {
+  delete[] mat;
+  mat = nullptr;
+}
 
 matrix3::matrix3(std::vector<std::vector<std::vector<float>>> const &in_mat) {
   this->size(in_mat.size(), in_mat[0].size(), in_mat[0][0].size());
@@ -47,6 +50,14 @@ matrix3::matrix3(std::vector<std::vector<std::vector<float>>> const &in_mat) {
       }
     }
   }
+}
+
+void matrix3::operator=(matrix3 const &m) {
+  this->size(m.z, m.n, m.m);
+  delete[] mat;
+  mat = new float[size()];
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
 matrix3 matrix3::zeros(uint32_t z, uint32_t n, uint32_t m) {

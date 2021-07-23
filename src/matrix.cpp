@@ -1,4 +1,5 @@
 #include "matrix.hpp"
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <random>
@@ -34,8 +35,18 @@ matrix::matrix(matrix const &m) {
     this->mat[i] = m.mat[i];
   }
 }
+void matrix::operator=(matrix const &m) {
+  size(m.n, m.m);
+  delete[] mat;
+  mat = new float[size()];
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
+}
 
-matrix::~matrix() { delete[] mat; }
+matrix::~matrix() {
+  delete[] mat;
+  mat = nullptr;
+}
 
 matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
   this->size(in_mat.size(), in_mat[0].size());

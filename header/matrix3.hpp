@@ -28,6 +28,7 @@ public:
   // take index of matrix
   float &operator()(uint32_t const z, uint32_t const n, const uint32_t m);
   float operator()(uint32_t const z, uint32_t const n, const uint32_t m) const;
+  void operator=(matrix3 const &m);
   uint32_t size() const;
 };
 

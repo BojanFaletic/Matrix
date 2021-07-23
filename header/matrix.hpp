@@ -27,6 +27,7 @@ public:
   static matrix random(uint32_t n, uint32_t m);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
+  void operator=(matrix const &m);
   uint32_t size() const;
 };
 

@@ -27,6 +27,7 @@ public:
                     uint32_t const m);
   float operator()(uint32_t const y, uint32_t const z, uint32_t const n,
                    uint32_t const m) const;
+  void operator=(matrix4 const &m);
   uint32_t size() const;
 };
 

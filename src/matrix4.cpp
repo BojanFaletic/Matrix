@@ -35,7 +35,10 @@ matrix4::matrix4(matrix4 const &m) {
   std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
-matrix4::~matrix4() { delete[] mat; }
+matrix4::~matrix4() {
+  delete[] mat;
+  mat = nullptr;
+}
 
 matrix4::matrix4(
     std::vector<std::vector<std::vector<std::vector<float>>>> const &in_mat) {
@@ -53,6 +56,14 @@ matrix4::matrix4(
       }
     }
   }
+}
+
+void matrix4::operator=(matrix4 const &m) {
+  this->size(m.y, m.z, m.m, m.n);
+  delete[] mat;
+  mat = new float[size()];
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
 matrix4 matrix4::zeros(uint32_t y, uint32_t z, uint32_t n, uint32_t m) {
