@@ -1,10 +1,9 @@
 #pragma once
 
+#include "matrix.hpp"
 #include <sstream>
 #include <stdint.h>
 #include <vector>
-#include "matrix.hpp"
-
 
 class matrix1 {
 public:
@@ -16,6 +15,7 @@ public:
 
 public:
   matrix1();
+  matrix1(matrix1 &&m);
   matrix1(matrix1 const &m);
   ~matrix1();
   matrix1(std::vector<float> const &in_mat);
@@ -27,6 +27,7 @@ public:
   // take index of matrix
   float &operator()(uint32_t const m);
   float operator()(uint32_t const m) const;
+  void operator=(matrix1 const &m);
   uint32_t size() const;
 };
 

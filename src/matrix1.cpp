@@ -35,6 +35,20 @@ matrix1::matrix1(std::vector<float> const &in_mat) {
   }
 }
 
+matrix1::matrix1(matrix1 &&m) {
+  mat = m.mat;
+  this->m = m.m;
+  m.mat = nullptr;
+}
+
+void matrix1::operator=(matrix1 const &m) {
+  this->size(m.m);
+  delete[] mat;
+  mat = new float[size()];
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
+}
+
 matrix1 matrix1::zeros(uint32_t m) {
   matrix1 M;
   M.size(m);
@@ -148,7 +162,7 @@ float matrix1::operator()(uint32_t const n) const { return mat[idx(n)]; }
 
 std::ostream &operator<<(std::ostream &out, matrix1 const &M) {
   out << std::setprecision(2);
-  out << "[";
+  out << "[ ";
   for (uint32_t m = 0; m < M.m; m++) {
     out << M(m) << " ";
   }
