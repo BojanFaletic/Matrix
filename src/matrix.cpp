@@ -1,4 +1,5 @@
 #include "matrix.hpp"
+#include "matrix1.hpp"
 #include <algorithm>
 #include <array>
 #include <iostream>
@@ -93,7 +94,7 @@ matrix matrix::dot(matrix const &b) {
   return out;
 }
 
-matrix matrix::dot_sparse(matrix const &b) {
+matrix matrix::dot_sparse(matrix const &b) const{
   matrix const &a = *this;
   constexpr float approx_zero = 1e-8;
   if (a.m != b.n) {
@@ -157,6 +158,20 @@ matrix matrix::random(uint32_t y, uint32_t x) {
 
   for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] = (double)(rand() % max_number) / max_number;
+  }
+  return M;
+}
+
+matrix1 matrix::flatten() const {
+  matrix1 M;
+  M.size(size());
+  M.mat = new float[M.size()];
+
+  uint32_t idx = 0;
+  for (uint32_t n = 0; n < this->n; n++) {
+    for (uint32_t m = 0; m < this->m; m++) {
+      M.mat[idx++] = (*this)(n, m);
+    }
   }
   return M;
 }

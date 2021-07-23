@@ -110,7 +110,7 @@ matrix1 matrix3::flatten() const {
 
 matrix matrix3::squeeze(uint32_t dim) const {
   matrix M;
-  M.size(n, m * z);
+  M.size(z, n * m);
 
   if (dim != 0) {
     std::cout << "not implemented\n;";
@@ -203,14 +203,14 @@ float matrix3::operator()(uint32_t const z, uint32_t const n,
 std::ostream &operator<<(std::ostream &out, matrix3 const &M) {
   out << std::setprecision(2);
   out << "[";
-  for (uint32_t m = 0; m < M.m; m++) {
-    out << ((m == 0) ? "[" : " [");
+  for (uint32_t z = 0; z < M.z; z++) {
+    out << ((z == 0) ? "[" : " [");
     for (uint32_t n = 0; n < M.n; n++) {
       out << ((n == 0) ? "[" : "  [");
-      for (uint32_t z = 0; z < M.z; z++) {
+      for (uint32_t m = 0; m < M.m; m++) {
         out << M(z, n, m) << " ";
       }
-      if (n == M.n - 1 && m == M.m - 1) {
+      if (n == M.n - 1 && z == M.z - 1) {
         out << "]]]\n";
         return out;
       }

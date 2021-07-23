@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <vector>
 
+class matrix1;
+
 class matrix {
 public:
   uint32_t n, m;
@@ -21,13 +23,14 @@ public:
 
   matrix T();
   matrix dot(matrix const &b);
-  matrix dot_sparse(matrix const &b);
+  matrix dot_sparse(matrix const &b) const;
   static matrix zeros(uint32_t n, uint32_t m);
   static matrix ones(uint32_t n, uint32_t m);
   static matrix random(uint32_t n, uint32_t m);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
   void operator=(matrix const &m);
+  matrix1 flatten() const;
   uint32_t size() const;
 };
 

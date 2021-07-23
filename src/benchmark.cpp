@@ -8,7 +8,7 @@ template <typename T> uint32_t time_diff(T F) {
 
   for (uint32_t i = 0; i < N_TIMES; i++) {
     auto t1 = time_s::now();
-    volatile auto out = F();
+    auto out = F();
     auto t2 = time_s::now();
     auto duration = std::chrono::duration_cast<nano_s>(t2 - t1).count();
     avg_time += duration;

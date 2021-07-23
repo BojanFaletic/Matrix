@@ -1,9 +1,11 @@
 #pragma once
 
-#include "matrix.hpp"
+#include "matrix1.hpp"
 #include <sstream>
 #include <stdint.h>
 #include <vector>
+
+class matrix;
 
 class matrix1 {
 public:
