@@ -1,17 +1,19 @@
 #include "matrix.hpp"
+#include "matrix1.hpp"
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <random>
 #include <sstream>
 
-float matrix::el(uint32_t y, uint32_t x) const {
-  uint32_t i = y * m + x;
-  return mat[i];
+uint32_t matrix::idx(uint32_t n, uint32_t m) const {
+  uint32_t i = n * this->m + m;
+  return i;
 }
 
-void matrix::size(uint32_t y, uint32_t x) {
-  n = y;
-  m = x;
+void matrix::size(uint32_t n, uint32_t m) {
+  this->n = n;
+  this->m = m;
 }
 
 uint32_t matrix::size() const { return m * n; }
@@ -33,6 +35,13 @@ matrix::matrix(matrix const &m) {
   for (uint32_t i = 0; i < m.size(); i++) {
     this->mat[i] = m.mat[i];
   }
+}
+void matrix::operator=(matrix const &m) {
+  size(m.n, m.m);
+  delete[] mat;
+  mat = new float[size()];
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
 matrix::~matrix() {
@@ -85,7 +94,7 @@ matrix matrix::dot(matrix const &b) {
   return out;
 }
 
-matrix matrix::dot_sparse(matrix const &b)  {
+matrix matrix::dot_sparse(matrix const &b) const{
   matrix const &a = *this;
   constexpr float approx_zero = 1e-8;
   if (a.m != b.n) {
@@ -149,6 +158,20 @@ matrix matrix::random(uint32_t y, uint32_t x) {
 
   for (uint32_t i = 0; i < M.size(); i++) {
     M.mat[i] = (double)(rand() % max_number) / max_number;
+  }
+  return M;
+}
+
+matrix1 matrix::flatten() const {
+  matrix1 M;
+  M.size(size());
+  M.mat = new float[M.size()];
+
+  uint32_t idx = 0;
+  for (uint32_t n = 0; n < this->n; n++) {
+    for (uint32_t m = 0; m < this->m; m++) {
+      M.mat[idx++] = (*this)(n, m);
+    }
   }
   return M;
 }
@@ -245,11 +268,11 @@ matrix operator+(matrix const &M, matrix const &m) {
 }
 
 float &matrix::operator()(uint32_t const n, uint32_t const m) {
-  return mat[n * this->m + m];
+  return mat[idx(n, m)];
 }
 
 float matrix::operator()(uint32_t const n, uint32_t const m) const {
-  return mat[n * this->m + m];
+  return mat[idx(n, m)];
 }
 
 std::ostream &operator<<(std::ostream &out, matrix const &M) {
@@ -260,7 +283,7 @@ std::ostream &operator<<(std::ostream &out, matrix const &M) {
     }
     uint32_t y = i / M.m;
     uint32_t x = i % M.m;
-    out << M.el(y, x) << " ";
+    out << M(y, x) << " ";
 
     if (i % M.m == M.m - 1) {
       out << ((i == M.n * M.m - 1) ? "]" : "]\n");

@@ -1,29 +1,35 @@
 #pragma once
 
+#include "matrix1.hpp"
 #include <sstream>
 #include <stdint.h>
 #include <vector>
 
+class matrix;
+
 class matrix1 {
 public:
-  uint32_t n;
+  uint32_t m;
   float *mat;
 
-  void size(uint32_t n);
-  uint32_t idx(uint32_t n) const;
+  void size(uint32_t m);
+  uint32_t idx(uint32_t m) const;
 
 public:
   matrix1();
+  matrix1(matrix1 &&m);
   matrix1(matrix1 const &m);
   ~matrix1();
   matrix1(std::vector<float> const &in_mat);
 
-  static matrix1 zeros(uint32_t n);
-  static matrix1 ones(uint32_t n);
-  static matrix1 random(uint32_t n);
+  static matrix1 zeros(uint32_t m);
+  static matrix1 ones(uint32_t m);
+  static matrix1 random(uint32_t m);
+  matrix unsqueeze(uint32_t dim) const;
   // take index of matrix
-  float &operator()(uint32_t const n);
-  float operator()(uint32_t const n) const;
+  float &operator()(uint32_t const m);
+  float operator()(uint32_t const m) const;
+  void operator=(matrix1 const &m);
   uint32_t size() const;
 };
 

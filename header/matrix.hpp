@@ -4,13 +4,15 @@
 #include <stdint.h>
 #include <vector>
 
+class matrix1;
+
 class matrix {
 public:
   uint32_t n, m;
   float *mat;
 
-  float el(uint32_t y, uint32_t x) const;
-  void size(uint32_t y, uint32_t x);
+  uint32_t idx(uint32_t n, uint32_t m) const;
+  void size(uint32_t n, uint32_t m);
 
 public:
   matrix();
@@ -21,12 +23,14 @@ public:
 
   matrix T();
   matrix dot(matrix const &b);
-  matrix dot_sparse(matrix const &b) ;
-  static matrix zeros(uint32_t y, uint32_t x);
-  static matrix ones(uint32_t y, uint32_t x);
-  static matrix random(uint32_t y, uint32_t x);
+  matrix dot_sparse(matrix const &b) const;
+  static matrix zeros(uint32_t n, uint32_t m);
+  static matrix ones(uint32_t n, uint32_t m);
+  static matrix random(uint32_t n, uint32_t m);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
+  void operator=(matrix const &m);
+  matrix1 flatten() const;
   uint32_t size() const;
 };
 

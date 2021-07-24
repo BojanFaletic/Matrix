@@ -1,5 +1,6 @@
 #pragma once
 
+#include "matrix4.hpp"
 #include <sstream>
 #include <stdint.h>
 #include <vector>
@@ -9,8 +10,8 @@ public:
   uint32_t n, m, z, y;
   float *mat;
 
-  void size(uint32_t n, uint32_t m, uint32_t z, uint32_t y);
-  uint32_t idx(uint32_t n, uint32_t m, uint32_t z, uint32_t y) const;
+  void size(uint32_t y, uint32_t z, uint32_t n, uint32_t m);
+  uint32_t idx(uint32_t y, uint32_t z, uint32_t n, uint32_t m) const;
 
 public:
   matrix4();
@@ -19,14 +20,15 @@ public:
   matrix4(
       std::vector<std::vector<std::vector<std::vector<float>>>> const &in_mat);
 
-  static matrix4 zeros(uint32_t n, uint32_t m, uint32_t z, uint32_t y);
-  static matrix4 ones(uint32_t n, uint32_t m, uint32_t z, uint32_t y);
-  static matrix4 random(uint32_t n, uint32_t m, uint32_t z, uint32_t y);
+  static matrix4 zeros(uint32_t y, uint32_t z, uint32_t n, uint32_t m);
+  static matrix4 ones(uint32_t y, uint32_t z, uint32_t n, uint32_t m);
+  static matrix4 random(uint32_t y, uint32_t z, uint32_t n, uint32_t m);
   // take index of matrix
-  float &operator()(uint32_t const n, uint32_t const m, uint32_t const z,
-                    uint32_t const y);
-  float operator()(uint32_t const n, uint32_t const m, uint32_t const z,
-                   uint32_t const y) const;
+  float &operator()(uint32_t const y, uint32_t const z, uint32_t const n,
+                    uint32_t const m);
+  float operator()(uint32_t const y, uint32_t const z, uint32_t const n,
+                   uint32_t const m) const;
+  void operator=(matrix4 const &m);
   uint32_t size() const;
 };
 

@@ -5,17 +5,17 @@
 #include <random>
 #include <sstream>
 
-void matrix4::size(uint32_t n, uint32_t m, uint32_t z, uint32_t y) {
+void matrix4::size(uint32_t y, uint32_t z, uint32_t n, uint32_t m) {
   this->n = n;
   this->m = m;
   this->z = z;
   this->y = y;
 }
 
-uint32_t matrix4::idx(uint32_t n, uint32_t m, uint32_t z, uint32_t y) const {
+uint32_t matrix4::idx(uint32_t y, uint32_t z, uint32_t n, uint32_t m) const {
   uint32_t layer = n * this->m + m;
-  uint32_t i3 = layer * z;
-  return i3 * y;
+  uint32_t i3 = layer * this->z + z;
+  return i3 * this->y + y;
 }
 
 uint32_t matrix4::size() const { return m * n * z * y; }
@@ -29,13 +29,16 @@ matrix4::matrix4() {
 }
 
 matrix4::matrix4(matrix4 const &m) {
-  this->size(m.n, m.m, m.z, m.y);
+  this->size(m.y, m.z, m.n, m.m);
   mat = new float[size()];
   uint32_t it = 0;
   std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
 }
 
-matrix4::~matrix4() { delete[] mat; }
+matrix4::~matrix4() {
+  delete[] mat;
+  mat = nullptr;
+}
 
 matrix4::matrix4(
     std::vector<std::vector<std::vector<std::vector<float>>>> const &in_mat) {
@@ -55,28 +58,36 @@ matrix4::matrix4(
   }
 }
 
-matrix4 matrix4::zeros(uint32_t n, uint32_t m, uint32_t z, uint32_t y) {
+void matrix4::operator=(matrix4 const &m) {
+  this->size(m.y, m.z, m.m, m.n);
+  delete[] mat;
+  mat = new float[size()];
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
+}
+
+matrix4 matrix4::zeros(uint32_t y, uint32_t z, uint32_t n, uint32_t m) {
   matrix4 M;
-  M.size(n, m, z, y);
+  M.size(y, z, n, m);
   M.mat = new float[M.size()];
 
   std::for_each(M.mat, M.mat + M.size(), [](float &f) { f = 0; });
   return M;
 }
 
-matrix4 matrix4::ones(uint32_t n, uint32_t m, uint32_t z, uint32_t y) {
+matrix4 matrix4::ones(uint32_t y, uint32_t z, uint32_t n, uint32_t m) {
   matrix4 M;
-  M.size(n, m, z, y);
+  M.size(y, z, n, m);
   M.mat = new float[M.size()];
 
   std::for_each(M.mat, M.mat + M.size(), [](float &f) { f = 1; });
   return M;
 }
 
-matrix4 matrix4::random(uint32_t n, uint32_t m, uint32_t z, uint32_t y) {
+matrix4 matrix4::random(uint32_t y, uint32_t z, uint32_t n, uint32_t m) {
   constexpr uint32_t max_number = 1e8;
   matrix4 M;
-  M.size(n, m, z, y);
+  M.size(y, z, n, m);
   M.mat = new float[M.size()];
 
   std::for_each(M.mat, M.mat + M.size(), [](float &f) {
@@ -135,8 +146,8 @@ matrix4 operator-=(matrix4 &M, float n) {
 }
 
 matrix4 operator*(matrix4 const &M, matrix4 const &C) {
-  std::array<uint32_t, 4> sz_A{M.n, M.m, M.z, M.y};
-  std::array<uint32_t, 4> sz_B{M.n, M.m, M.z, M.y};
+  std::array<uint32_t, 4> sz_A{M.y, M.z, M.n, M.m};
+  std::array<uint32_t, 4> sz_B{M.y, M.z, M.n, M.m};
 
   if (sz_A != sz_B) {
     std::cerr << "Hadamard product unable matrix4 shape not valid\n";
@@ -149,14 +160,14 @@ matrix4 operator*(matrix4 const &M, matrix4 const &C) {
   return A;
 }
 
-float &matrix4::operator()(uint32_t const n, uint32_t const m, uint32_t const z,
-                           uint32_t const y) {
-  return mat[idx(n, m, z, y)];
+float &matrix4::operator()(uint32_t const y, uint32_t const z, uint32_t const n,
+                           uint32_t const m) {
+  return mat[idx(y, z, n, m)];
 }
 
-float matrix4::operator()(uint32_t const n, uint32_t const m, uint32_t const z,
-                          uint32_t y) const {
-  return mat[idx(n, m, z, y)];
+float matrix4::operator()(uint32_t const y, uint32_t const z, uint32_t const n,
+                          uint32_t m) const {
+  return mat[idx(y, z, n, m)];
 }
 
 std::ostream &operator<<(std::ostream &out, matrix4 const &M) {
@@ -164,20 +175,20 @@ std::ostream &operator<<(std::ostream &out, matrix4 const &M) {
   out << "[";
   for (uint32_t y = 0; y < M.y; y++) {
     out << "[";
-    for (uint32_t m = 0; m < M.m; m++) {
-      out << ((m == 0) ? "[" : "  [");
+    for (uint32_t z = 0; z < M.z; z++) {
+      out << ((z == 0) ? "[" : "  [");
       for (uint32_t n = 0; n < M.n; n++) {
         out << ((n == 0) ? "[" : "   [");
-        for (uint32_t z = 0; z < M.z; z++) {
-          out << M(m, n, z, y) << " ";
+        for (uint32_t m = 0; m < M.m; m++) {
+          out << M(y, z, n, m) << " ";
         }
-        if (n == M.n - 1 && m == M.m - 1 && y == M.y - 1) {
+        if (z == M.z - 1 && y == M.y - 1 && n == M.n - 1) {
           out << "]]]\n";
           return out;
         }
         out << ((n == M.n - 1) ? "]" : "]\n");
       }
-      out << ((m == M.m - 1) ? "]" : "]\n");
+      out << ((z == M.z - 1) ? "]" : "]\n");
     }
     out << "]\n";
   }
