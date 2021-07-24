@@ -1,2 +1,6 @@
 obj
 obj_dbg
+.*
+test
+test.cpp
+*.out
