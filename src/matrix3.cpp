@@ -1,4 +1,6 @@
 #include "matrix3.hpp"
+#include "matrix.hpp"
+#include "matrix1.hpp"
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
