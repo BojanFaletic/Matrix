@@ -1,4 +1,4 @@
-.PHONY:clean
+.PHONY:clean, tests
 CC=clang++
 
 # With this flag you can passs extra arguments for example debug (-g)
@@ -11,7 +11,17 @@ LDFLAGS:=
 SRCS=$(wildcard src/*.cpp)
 OBJS=$(patsubst src/%.cpp, obj/%.o, $(SRCS))
 
+TESTS_SRC=$(wildcard tests/*.cpp)
+TESTS=$(TESTS_SRC:.cpp=.out)
 all: obj test
+
+tests: $(TESTS)
+
+
+# build all tests
+$(TESTS): %.out:%.cpp $(OBJS)
+	clang++ $< -Iheader $(OBJS) -lbenchmark -pthread -o $@ -std=c++20 -Wall -Wextra
+
 
 # build exectuable
 test: $(OBJS) test.cpp

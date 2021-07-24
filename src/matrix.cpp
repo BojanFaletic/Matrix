@@ -35,7 +35,10 @@ matrix::matrix(matrix const &m) {
   }
 }
 
-matrix::~matrix() { delete[] mat; }
+matrix::~matrix() {
+  delete[] mat;
+  mat = nullptr;
+}
 
 matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
   this->size(in_mat.size(), in_mat[0].size());
@@ -82,7 +85,7 @@ matrix matrix::dot(matrix const &b) {
   return out;
 }
 
-matrix matrix::dot_sparse(matrix const &b) {
+matrix matrix::dot_sparse(matrix const &b)  {
   matrix const &a = *this;
   constexpr float approx_zero = 1e-8;
   if (a.m != b.n) {
