@@ -13,7 +13,7 @@ void test_mat(matrix &a, matrix const &b, matrix c) { c = a.dot(b); }
 static void BM_Eigen(benchmark::State &state) {
   MatrixXf a = MatrixXf::Zero(mat_size, mat_size);
   MatrixXf b = MatrixXf::Random(mat_size, mat_size);
-  MatrixXf c = MatrixXf::Random(mat_size, mat_size);
+  MatrixXf c;
 
   for (auto _ : state) {
     // this code gets timed
@@ -22,8 +22,8 @@ static void BM_Eigen(benchmark::State &state) {
 }
 
 static void BM_mat(benchmark::State &state) {
-  matrix a = matrix::zeros(mat_size, mat_size);
-  matrix b = matrix::random(mat_size, mat_size);
+  matrix a = matrix::ones(mat_size, mat_size);
+  matrix b = matrix::ones(mat_size, mat_size);
   matrix c;
 
   for (auto _ : state) {
