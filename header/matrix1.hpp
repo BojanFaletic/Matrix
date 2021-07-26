@@ -1,18 +1,15 @@
 #pragma once
 
 #include "matrix1.hpp"
+#include "matrix_generic.hpp"
 #include <sstream>
 #include <stdint.h>
 #include <vector>
 
 class matrix;
 
-class matrix1 {
-public:
-  uint32_t m;
-  float *mat;
+class matrix1 : public matrix_generic {
 
-  void size(uint32_t m);
   uint32_t idx(uint32_t m) const;
 
 public:
@@ -29,20 +26,9 @@ public:
   // take index of matrix
   float &operator()(uint32_t const m);
   float operator()(uint32_t const m) const;
-  void operator=(matrix1 const &m);
+  void operator=(matrix_generic const &m);
   uint32_t size() const;
+  void size(uint32_t m);
 };
 
 std::ostream &operator<<(std::ostream &out, matrix1 const &M);
-
-// scalar operators on matrix
-matrix1 operator*(matrix1 const &M, float n);
-matrix1 operator/(matrix1 const &M, float n);
-matrix1 operator+(matrix1 const &M, float n);
-matrix1 operator-(matrix1 const &M, float n);
-matrix1 operator*=(matrix1 &M, float n);
-matrix1 operator/=(matrix1 &M, float n);
-matrix1 operator+=(matrix1 &M, float n);
-matrix1 operator-=(matrix1 &M, float n);
-// operation on matrix
-matrix1 operator*(matrix1 const &M, matrix1 const &C);

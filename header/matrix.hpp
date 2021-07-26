@@ -4,14 +4,12 @@
 #include <sstream>
 #include <stdint.h>
 #include <vector>
+#include "matrix_generic.hpp"
 
 class matrix1;
 
-class matrix {
+class matrix : public matrix_generic{
 public:
-  uint32_t n, m;
-  float *mat;
-  static bool approx_zero(float const f);
   // number of zero element in matrix
   uint32_t sparsity_cnt_n, sparsity_cnt_m;
 
@@ -42,25 +40,11 @@ public:
   static matrix random(uint32_t n, uint32_t m);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
-  matrix operator=(matrix const &m);
-  bool operator==(matrix const &m) const;
   matrix1 flatten() const;
   uint32_t size() const;
   std::array<uint32_t, 2> shape() const;
+
+  matrix &operator=(matrix_generic const &m);
 };
 
 std::ostream &operator<<(std::ostream &out, matrix const &M);
-
-// scalar operators on matrix
-matrix operator*(matrix const &M, float n);
-matrix operator/(matrix const &M, float n);
-matrix operator+(matrix const &M, float n);
-matrix operator-(matrix const &M, float n);
-matrix operator*=(matrix &M, float n);
-matrix operator/=(matrix &M, float n);
-matrix operator+=(matrix &M, float n);
-matrix operator-=(matrix &M, float n);
-
-// operation on matrix
-matrix operator*(matrix const &M, matrix const &C);
-matrix operator+(matrix const &M, matrix const &m);
