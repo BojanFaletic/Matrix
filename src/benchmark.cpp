@@ -17,8 +17,8 @@ template <typename T> uint32_t time_diff(T F) {
   return (uint32_t)(avg_time / N_TIMES);
 }
 
-void benchmark(matrix m1) {
-  auto F = [&] { return m1.dot(m1.T()); };
+void benchmark(matrix const &m1) {
+  auto F = [&]() { return m1.dot(m1.T()); };
 
   bool use_us = false;
   for (int i = 0; i < 3; i++) {
@@ -32,7 +32,7 @@ void benchmark(matrix m1) {
   }
 }
 
-void benchmark(matrix m1, matrix m2) {
+void benchmark(matrix const &m1, matrix const &m2) {
   auto F = [&] { return m1.dot(m2); };
   auto F_sparse = [&] { return m1.dot_sparse(m2); };
 

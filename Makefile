@@ -1,4 +1,4 @@
-.PHONY:clean, build_src, tests
+.PHONY:clean, build_src, tests, unittest
 CC=clang++
 
 # With this flag you can passs extra arguments for example debug (-g)
@@ -23,10 +23,21 @@ TESTS_SRC=$(wildcard tests/*.cpp)
 TESTS=$(TESTS_SRC:.cpp=.out)
 tests: $(TESTS)
 
+# build testbench
+UNITTEST_SRC=$(wildcard unittest/*.cpp)
+UNITTESTS=$(UNITTEST_SRC:.cpp=.out)
+unittest: $(UNITTESTS)
+
+
 
 # build all tests
 $(TESTS): %.out:%.cpp $(OBJS)
 	clang++ $< -Iheader $(OBJS) -lbenchmark -pthread -o $@ -std=c++20 -Wall -Wextra -O2
+
+
+# build unit tests
+$(UNITTESTS): %.out:%.cpp $(OBJS)
+	clang++ $< -Iheader $(OBJS) -lgtest -o $@ -std=c++20 -Wall -Wextra -O0
 
 
 #build objecets

@@ -4,48 +4,38 @@
 #include <array>
 #include <iostream>
 #include <random>
+#include <set>
 #include <sstream>
+#include <vector>
 
-uint32_t matrix::idx(uint32_t n, uint32_t m) const {
-  uint32_t i = n * this->m + m;
-  return i;
-}
-
-void matrix::size(uint32_t n, uint32_t m) {
-  this->n = n;
-  this->m = m;
-}
-
-uint32_t matrix::size() const { return m * n; }
-
-matrix::matrix() {
-  n = 0;
-  m = 0;
-  mat = nullptr;
-}
+/******************************************************************************/
+/**************************** Constructors ************************************/
+/******************************************************************************/
 
 matrix::matrix(float *data, uint32_t n, uint32_t m) {
   mat = data;
   this->size(n, m);
 }
 
-matrix::matrix(matrix const &m) {
-  this->size(m.n, m.m);
+matrix::matrix(matrix const &M) {
+  this->size(M.n, M.m);
   mat = new float[size()];
-  for (uint32_t i = 0; i < m.size(); i++) {
-    this->mat[i] = m.mat[i];
+  uint32_t idx = 0;
+
+  for (uint32_t n = 0; n < shape()[0]; n++) {
+    for (uint32_t m = 0; m < shape()[1]; m++) {
+      (*this)(n, m) = M(n, m);
+    }
   }
-}
-void matrix::operator=(matrix const &m) {
-  size(m.n, m.m);
-  delete[] mat;
-  mat = new float[size()];
-  uint32_t it = 0;
-  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
+  sparsity_cnt_n = M.sparsity_cnt_n;
+  sparsity_cnt_m = M.sparsity_cnt_m;
 }
 
-matrix::~matrix() {
-  delete[] mat;
+matrix::matrix() {
+  n = 0;
+  m = 0;
+  sparsity_cnt_n = 0;
+  sparsity_cnt_m = 0;
   mat = nullptr;
 }
 
@@ -61,13 +51,114 @@ matrix::matrix(std::vector<std::vector<float>> const &in_mat) {
   }
 }
 
-matrix matrix::T() {
-  matrix M(*this);
+matrix::~matrix() {
+  delete[] mat;
+  mat = nullptr;
+}
+
+/******************************************************************************/
+/****************************** Private ***************************************/
+/******************************************************************************/
+
+uint32_t matrix::idx(uint32_t n, uint32_t m) const {
+  uint32_t i = n * this->m + m;
+  return i;
+}
+
+bool matrix::approx_zero(float const f) {
+  constexpr float zero_tol = 1e-8;
+  return std::abs(f) < zero_tol;
+}
+
+void matrix::init_sparsity() {
+  std::set<uint32_t> row;
+  std::set<uint32_t> column;
+
+  for (uint32_t n = 0; n < shape()[0]; n++) {
+    for (uint32_t m = 0; m < shape()[1]; m++) {
+      if (approx_zero((*this)(n, m))) {
+        row.insert(m);
+        column.insert(n);
+      }
+    }
+  }
+  sparsity_cnt_n = row.size() * n;
+  sparsity_cnt_m = column.size() * m;
+}
+
+/******************************************************************************/
+/****************************** Public ***************************************/
+/******************************************************************************/
+
+void matrix::size(uint32_t n, uint32_t m) {
+  this->n = n;
+  this->m = m;
+}
+
+uint32_t matrix::size() const { return m * n; }
+
+std::array<uint32_t, 2> matrix::shape() const { return {n, m}; }
+
+void matrix::operator=(matrix const &m) {
+  size(m.n, m.m);
+  delete[] mat;
+  mat = new float[size()];
+  uint32_t it = 0;
+  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
+}
+
+matrix matrix::T() const {
+  matrix M = *this;
   M.size(m, n);
   return M;
 }
 
-matrix matrix::dot(matrix const &b) {
+matrix matrix::normal_dot(matrix const &a, matrix const &b) {
+  matrix out;
+  out.size(a.n, b.m);
+  out.mat = new float[out.size()];
+
+  uint32_t it = 0;
+  for (uint32_t i = 0; i < a.n; i++) {
+    for (uint32_t j = 0; j < b.m; j++) {
+      float accum = 0;
+      for (uint32_t k = 0; k < a.m; k++) {
+        accum += a(i, k) * b(k, j);
+      }
+      out.mat[it++] = accum;
+    }
+  }
+  return out;
+}
+
+matrix matrix::sparse_dot(matrix const &a, matrix const &b) {
+  uint32_t width = b.m;
+  uint32_t height = a.n;
+  uint32_t depth = a.m;
+
+  matrix out;
+  out.size(height, width);
+  out.mat = new float[out.size()];
+
+  for (uint32_t k = 0; k < height; k++) {
+    float *accum = out.mat + k * width;
+    for (uint32_t i = 0; i < width; i++) {
+      accum[i] = 0;
+    }
+    for (uint32_t j = 0; j < depth; j++) {
+      if (!approx_zero(a(k, j))) {
+        // vectorization goes here
+        for (uint32_t i = 0; i < width; i++) {
+          accum[i] += a(k, j) * b(j, i);
+        }
+      }
+    }
+  }
+
+  return out;
+}
+
+matrix matrix::dot(matrix const &b) const {
   matrix const &a = *this;
   if (a.m != b.n) {
     std::cerr << "Matrix shape not compatible\n";
@@ -94,9 +185,8 @@ matrix matrix::dot(matrix const &b) {
   return out;
 }
 
-matrix matrix::dot_sparse(matrix const &b) const{
+matrix matrix::dot_sparse(matrix const &b) const {
   matrix const &a = *this;
-  constexpr float approx_zero = 1e-8;
   if (a.m != b.n) {
     std::cerr << "Matrix shape not compatible\n";
     exit(1);
@@ -116,7 +206,7 @@ matrix matrix::dot_sparse(matrix const &b) const{
       accum[i] = 0;
     }
     for (uint32_t j = 0; j < depth; j++) {
-      if (std::abs(a(k, j)) > approx_zero) {
+      if (!approx_zero(a(k, j))) {
         // vectorization goes here
         for (uint32_t i = 0; i < width; i++) {
           accum[i] += a(k, j) * b(j, i);
@@ -179,6 +269,16 @@ matrix1 matrix::flatten() const {
 /******************************************************************************/
 /***************************** Operators **************************************/
 /******************************************************************************/
+
+bool matrix::operator==(matrix const &m) const {
+  for (uint32_t idx = 0; idx < size(); idx++) {
+    if (m.mat[idx] != mat[idx]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 matrix operator*(matrix const &M, float n) {
   matrix A = M;
   for (uint32_t i = 0; i < M.n * M.m; i++) {
