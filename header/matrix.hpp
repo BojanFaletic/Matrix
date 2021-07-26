@@ -19,9 +19,14 @@ public:
   void size(uint32_t n, uint32_t m);
 
   static matrix normal_dot(matrix const &a, matrix const &b);
-  static matrix sparse_dot(matrix const &a, matrix const &b);
 
-  void init_sparsity();
+  // perform sparse dot product (if a is more spatse than b then normal else
+  // reverse)
+  static matrix sparse_dot_normal(matrix const &a, matrix const &b);
+  static matrix sparse_dot_reverse(matrix const &a, matrix const &b);
+
+  // count number of sparse element
+  static void init_sparsity(matrix &M);
 
 public:
   matrix();
@@ -32,13 +37,12 @@ public:
 
   matrix T() const;
   matrix dot(matrix const &b) const;
-  matrix dot_sparse(matrix const &b) const;
   static matrix zeros(uint32_t n, uint32_t m);
   static matrix ones(uint32_t n, uint32_t m);
   static matrix random(uint32_t n, uint32_t m);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
-  void operator=(matrix const &m);
+  matrix operator=(matrix const &m);
   bool operator==(matrix const &m) const;
   matrix1 flatten() const;
   uint32_t size() const;
