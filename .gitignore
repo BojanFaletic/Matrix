@@ -4,3 +4,4 @@ obj_dbg
 test
 test.cpp
 *.out
+test_dbg

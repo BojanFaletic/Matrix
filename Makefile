@@ -1,4 +1,4 @@
-.PHONY:clean, build_src, tests, unittest
+.PHONY:clean, build_src, tests, unittest, build_src_dbg
 CC=clang++
 
 # With this flag you can passs extra arguments for example debug (-g)
@@ -42,11 +42,15 @@ $(UNITTESTS): %.out:%.cpp $(OBJS)
 
 #build objecets
 build_src: obj $(OBJS)
-build_src_dbg: obj_dbg $(OBJS_DBG)
+build_src_dbg: obj_dbg $(OBJS_DBG) test_dbg
 
 # build exectuable
 test: $(OBJS) test.cpp
 	$(CC) -Iheader $^ $(LDFLAGS) -o $@
+
+test_dbg: $(OBJS_DBG) test.cpp
+	$(CC) -Iheader $^ $(LDFLAGS) -g -o $@
+
 
 # build all objects
 $(OBJS) : obj/%.o : src/%.cpp

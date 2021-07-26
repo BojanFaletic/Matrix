@@ -83,8 +83,8 @@ void matrix::init_sparsity(matrix &M) {
       }
     }
   }
-  M.sparsity_cnt_n = row.size() * M.n;
-  M.sparsity_cnt_m = column.size() * M.m;
+  M.sparsity_cnt_n = row.size();
+  M.sparsity_cnt_m = column.size();
 }
 
 /******************************************************************************/
@@ -175,14 +175,10 @@ matrix matrix::dot(matrix const &b) const {
     exit(1);
   }
   // find  optimal way of performing dot product
-  uint32_t first_option = this->sparsity_cnt_m * b.sparsity_cnt_n;
-  uint32_t second_option = this->sparsity_cnt_n * b.sparsity_cnt_m;
+  uint32_t first_option = sparsity_cnt_m * b.m;
+  uint32_t second_option = b.sparsity_cnt_n * n;
 
-  // approximate cost of branch predictor
-  uint32_t branch_savings = this->sparsity_cnt_n * 4;
-  uint16_t max_savings = std::max(first_option, second_option);
-
-  if (max_savings > branch_savings) {
+  if (first_option != 0 || second_option != 0) {
     if (first_option > second_option) {
       return matrix::sparse_dot_normal(*this, b);
     } else {
