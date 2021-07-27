@@ -42,7 +42,7 @@ $(UNITTESTS): %.out:%.cpp $(OBJS)
 
 #build objecets
 build_src: obj $(OBJS)
-build_src_dbg: obj_dbg $(OBJS_DBG) test_dbg
+build_src_dbg: obj_dbg test_dbg
 
 # build exectuable
 test: $(OBJS) test.cpp

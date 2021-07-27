@@ -6,16 +6,14 @@
 #include <stdint.h>
 #include <vector>
 
-class matrix;
+struct matrix;
 
-class matrix1 : public matrix_generic {
+struct matrix1 : public matrix_generic {
+  using matrix_generic::size;
 
-  uint32_t idx(uint32_t m) const;
-
-public:
   matrix1();
-  matrix1(matrix1 &&m);
   matrix1(matrix1 const &m);
+  matrix1(uint32_t const m);
   ~matrix1();
   matrix1(std::vector<float> const &in_mat);
 
@@ -27,7 +25,10 @@ public:
   float &operator()(uint32_t const m);
   float operator()(uint32_t const m) const;
   void operator=(matrix_generic const &m);
-  uint32_t size() const;
+
+  std::array<uint32_t, 1> shape() const;
+
+  void shape(uint32_t m);
   void size(uint32_t m);
 };
 
