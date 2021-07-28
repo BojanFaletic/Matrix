@@ -27,6 +27,7 @@ protected:
 
 public:
   matrix_generic();
+  matrix_generic(matrix_generic const &M);
   ~matrix_generic();
   void calculate_sparcity();
 
@@ -47,6 +48,7 @@ public:
   friend matrix_generic operator/=(matrix_generic &M, float n);
   friend matrix_generic operator+=(matrix_generic &M, float n);
   friend matrix_generic operator-=(matrix_generic &M, float n);
+  friend bool operator==(matrix_generic const &M, matrix_generic const &A);
 
   // operation on matrix_generic
   friend matrix_generic operator*(matrix_generic const &M,

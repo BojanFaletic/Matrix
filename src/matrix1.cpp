@@ -85,7 +85,11 @@ matrix matrix1::unsqueeze(uint32_t dim) const {
 float matrix1::operator()(uint32_t const n) const { return mat[idx(n)]; }
 
 void matrix1::operator=(matrix_generic const &m) {
-  size(m.shape()[3]);
+  if (size() != m.size()){
+    size(m.shape()[3]);
+    delete[] mat;
+    mat = new float[size()];
+  }
   copy(m);
 }
 

@@ -2,10 +2,57 @@
 #include "matrix1.hpp"
 #include <algorithm>
 #include <iostream>
+#include <random>
+#include <set>
+
+matrix_generic::matrix_generic(matrix_generic const &M) {
+  dim = {M.shape(0), M.shape(1), M.shape(2), M.shape(3)};
+  mat = new float[size()];
+  copy(M);
+}
 
 bool matrix_generic::approx_zero(float const f) {
   constexpr float zero_tol = 1e-8;
   return std::abs(f) < zero_tol;
+}
+
+uint32_t matrix_generic::shape(uint32_t axis) const { return shape()[axis]; }
+
+float &matrix_generic::operator()(uint32_t const y, uint32_t const z,
+                                  uint32_t const n, uint32_t const m) {
+  return mat[idx(y, z, n, m)];
+}
+
+float matrix_generic::operator()(uint32_t const y, uint32_t const z,
+                                 uint32_t const n, uint32_t const m) const {
+  return mat[idx(y, z, n, m)];
+}
+
+void matrix_generic::init_zero() { std::fill(begin(), end(), 0); }
+
+void matrix_generic::init_ones() { std::fill(begin(), end(), 1); }
+void matrix_generic::init_random() {
+  std::for_each(begin(), end(), [](float &f) { f = rand(); });
+}
+
+void matrix_generic::calculate_sparcity() {
+  std::set<uint32_t> y_s, z_s, n_s, m_s;
+  for (uint32_t y = 0; y < shape(0); y++) {
+    for (uint32_t z = 0; z < shape(1); z++) {
+      for (uint32_t n = 0; n < shape(2); n++) {
+        for (uint32_t m = 0; m < shape(3); m++) {
+          if (approx_zero((*this)(y, z, n, m))) {
+            y_s.insert(y);
+            z_s.insert(z);
+            n_s.insert(n);
+            m_s.insert(m);
+          }
+        }
+      }
+    }
+  }
+  sparsity = {(uint32_t)y_s.size(), (uint32_t)z_s.size(), (uint32_t)n_s.size(),
+              (uint32_t)m_s.size()};
 }
 
 uint32_t matrix_generic::idx(uint32_t y, uint32_t z, uint32_t n,
@@ -50,9 +97,8 @@ void matrix_generic::copy(matrix_generic const &m) {
     exit(1);
   }
   uint32_t idx = 0;
-  std::for_each(begin(), end(), [&](float &f) { f = m.mat[idx++];});
-  mat[0] = m.mat[0];
-  float el = mat[0];
+  std::for_each(begin(), end(), [&](float &f) { f = m.mat[idx++]; });
+  sparsity = m.sparsity;
 }
 
 std::array<uint32_t, 4> matrix_generic::shape() const { return dim; }
@@ -63,13 +109,13 @@ float *matrix_generic::end() { return mat + size(); }
 
 matrix_generic::matrix_generic() {
   mat = nullptr;
-  dim = {};
+  sparsity = {0, 0, 0, 0};
+  dim = {0, 0, 0, 0};
 }
 
 matrix_generic::~matrix_generic() {
-  // delete mat;
-  // mat = nullptr;
-  // dim = {0};
+  delete[] mat;
+  mat = nullptr;
 }
 
 matrix_generic &matrix_generic::operator=(matrix_generic const &m) {
@@ -150,4 +196,16 @@ matrix_generic operator+(matrix_generic const &M, matrix_generic const &m) {
     A.mat[i] = M.mat[i] + m.mat[i];
   }
   return A;
+}
+
+bool operator==(matrix_generic const &M, matrix_generic const &A) {
+  if (M.shape() != A.shape()) {
+    return false;
+  }
+  for (uint32_t idx = 0; idx < A.size(); idx++) {
+    if (M.mat[idx] != A.mat[idx]) {
+      return false;
+    }
+  }
+  return true;
 }

@@ -9,6 +9,7 @@
 struct matrix1;
 
 struct matrix : public matrix_generic{
+  using matrix_generic::size;
   void size(uint32_t n, uint32_t m);
 
   static matrix normal_dot(matrix const &a, matrix const &b);
@@ -21,6 +22,7 @@ struct matrix : public matrix_generic{
 
   matrix();
   matrix(matrix const &m);
+  matrix(matrix_generic const &m);
   matrix(uint32_t const n, uint32_t const m);
   ~matrix();
   matrix(std::vector<std::vector<float>> const &in_mat);
@@ -34,7 +36,6 @@ struct matrix : public matrix_generic{
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
   matrix1 flatten() const;
-  uint32_t size() const;
   std::array<uint32_t, 2> shape() const;
   uint32_t shape(uint32_t const axis) const;
 

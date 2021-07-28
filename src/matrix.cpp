@@ -12,6 +12,12 @@
 /**************************** Constructors ************************************/
 /******************************************************************************/
 
+matrix::matrix(matrix_generic const &m){
+  size(m.shape(2), m.shape(3));
+  mat = new float[size()];
+  copy(m);
+}
+
 matrix::matrix(uint32_t const n, uint32_t const m) {
   size(n, m);
   mat = new float[size()];
@@ -58,8 +64,6 @@ matrix::~matrix() {
 }
 
 void matrix::size(uint32_t n, uint32_t m) { dim = {0, 0, n, m}; }
-
-uint32_t matrix::size() const { return dim[0] * dim[1]; }
 
 std::array<uint32_t, 2> matrix::shape() const { return {dim[2], dim[3]}; }
 
