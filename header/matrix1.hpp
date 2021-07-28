@@ -27,6 +27,7 @@ struct matrix1 : public matrix_generic {
   void operator=(matrix_generic const &m);
 
   std::array<uint32_t, 1> shape() const;
+  uint32_t shape(uint32_t const axis) const;
 
   void shape(uint32_t m);
   void size(uint32_t m);

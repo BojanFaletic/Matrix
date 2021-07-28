@@ -35,7 +35,6 @@ struct matrix : public matrix_generic{
   static matrix random(uint32_t n, uint32_t m);
   float &operator()(uint32_t const n, uint32_t const m);
   float operator()(uint32_t const n, uint32_t const m) const;
-  matrix1 flatten() const;
   std::array<uint32_t, 2> shape() const;
   uint32_t shape(uint32_t const axis) const;
 

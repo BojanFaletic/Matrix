@@ -178,11 +178,6 @@ matrix matrix::random(uint32_t y, uint32_t x) {
   return M;
 }
 
-matrix1 matrix::flatten() const {
-  matrix1 M(size());
-  M.copy(*this);
-  return M;
-}
 
 /******************************************************************************/
 /***************************** Operators **************************************/

@@ -19,7 +19,6 @@ matrix1::matrix1() {
 matrix1::matrix1(matrix1 const &m) {
   dim = m.dim;
   mat = new float[size()];
-  uint32_t it = 0;
   this->copy(m);
 }
 
@@ -31,6 +30,7 @@ matrix1::~matrix1() {
 void matrix1::size(uint32_t m) { dim = {0, 0, 0, m}; }
 
 std::array<uint32_t, 1> matrix1::shape() const { return {dim[3]}; }
+uint32_t matrix1::shape(uint32_t const axis) const { return shape()[axis]; }
 
 matrix1::matrix1(std::vector<float> const &in_mat) {
   this->size(in_mat.size());
@@ -85,8 +85,8 @@ matrix matrix1::unsqueeze(uint32_t dim) const {
 float matrix1::operator()(uint32_t const n) const { return mat[idx(n)]; }
 
 void matrix1::operator=(matrix_generic const &m) {
-  if (size() != m.size()){
-    size(m.shape()[3]);
+  if (size() != m.size()) {
+    size(m.shape(3));
     delete[] mat;
     mat = new float[size()];
   }
@@ -96,7 +96,7 @@ void matrix1::operator=(matrix_generic const &m) {
 std::ostream &operator<<(std::ostream &out, matrix1 const &M) {
   out << std::setprecision(2);
   out << "[ ";
-  for (uint32_t m = 0; m < M.shape()[0]; m++) {
+  for (uint32_t m = 0; m < M.shape(0); m++) {
     float el = M(m);
     out << el << " ";
   }

@@ -27,6 +27,8 @@ protected:
 
 public:
   matrix_generic();
+  matrix_generic(uint32_t const y, uint32_t const z, uint32_t const n,
+                 uint32_t const m);
   matrix_generic(matrix_generic const &M);
   ~matrix_generic();
   void calculate_sparcity();
@@ -36,7 +38,6 @@ public:
 
   // matrix1 flatten() const;
   uint32_t size() const;
-  std::array<uint32_t, 4> shape() const;
   uint32_t shape(uint32_t axis) const;
 
   // scalar operators on matrix
@@ -65,5 +66,8 @@ public:
   float *begin();
   float *end();
 
+  // general matrix operations
   void copy(matrix_generic const &m);
+  matrix_generic flatten() const;
+  // matrix squeeze(uint32_t dim) const;
 };

@@ -16,7 +16,7 @@ bool matrix_generic::approx_zero(float const f) {
   return std::abs(f) < zero_tol;
 }
 
-uint32_t matrix_generic::shape(uint32_t axis) const { return shape()[axis]; }
+uint32_t matrix_generic::shape(uint32_t axis) const { return dim[axis]; }
 
 float &matrix_generic::operator()(uint32_t const y, uint32_t const z,
                                   uint32_t const n, uint32_t const m) {
@@ -33,6 +33,12 @@ void matrix_generic::init_zero() { std::fill(begin(), end(), 0); }
 void matrix_generic::init_ones() { std::fill(begin(), end(), 1); }
 void matrix_generic::init_random() {
   std::for_each(begin(), end(), [](float &f) { f = rand(); });
+}
+
+matrix_generic matrix_generic::flatten() const {
+  matrix_generic M(0, 0, 0, size());
+  M.copy(*this);
+  return M;
 }
 
 void matrix_generic::calculate_sparcity() {
@@ -101,8 +107,6 @@ void matrix_generic::copy(matrix_generic const &m) {
   sparsity = m.sparsity;
 }
 
-std::array<uint32_t, 4> matrix_generic::shape() const { return dim; }
-
 float *matrix_generic::begin() { return &mat[0]; }
 
 float *matrix_generic::end() { return mat + size(); }
@@ -111,6 +115,12 @@ matrix_generic::matrix_generic() {
   mat = nullptr;
   sparsity = {0, 0, 0, 0};
   dim = {0, 0, 0, 0};
+}
+
+matrix_generic::matrix_generic(uint32_t const y, uint32_t const z,
+                               uint32_t const n, uint32_t const m) {
+  dim = {y, z, n, m};
+  mat = new float[size()];
 }
 
 matrix_generic::~matrix_generic() {
@@ -174,7 +184,7 @@ matrix_generic operator+=(matrix_generic &M, float n) {
 }
 
 matrix_generic operator*(matrix_generic const &M, matrix_generic const &C) {
-  if (M.shape() != C.shape()) {
+  if (M.dim != C.dim) {
     std::cerr << "Hadamard product unable matrix_generic shape not valid\n";
     exit(1);
   }
@@ -187,7 +197,7 @@ matrix_generic operator*(matrix_generic const &M, matrix_generic const &C) {
 }
 
 matrix_generic operator+(matrix_generic const &M, matrix_generic const &m) {
-  if (M.shape() != m.shape()) {
+  if (M.dim != m.dim) {
     std::cerr << "Cannot add matrix_generic of different shape\n";
     exit(1);
   }
@@ -199,7 +209,7 @@ matrix_generic operator+(matrix_generic const &M, matrix_generic const &m) {
 }
 
 bool operator==(matrix_generic const &M, matrix_generic const &A) {
-  if (M.shape() != A.shape()) {
+  if (M.dim != A.dim) {
     return false;
   }
   for (uint32_t idx = 0; idx < A.size(); idx++) {
