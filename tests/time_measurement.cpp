@@ -44,25 +44,10 @@ static void BM_copy_constructor(benchmark::State &state) {
   }
 }
 
-static void BM_test_dot_mult(benchmark::State &state) {
-  matrix a = matrix::random(mat_size, mat_size);
-  matrix b = matrix::random(mat_size, mat_size);
-  matrix c = matrix::random(mat_size, mat_size);
-
-  for (auto _ : state) {
-    // this code gets timed
-    for (uint32_t idx = 0; idx < mat_size * mat_size; idx++){
-      c.mat[idx] += a.mat[idx] * b.mat[idx];
-    }
-  }
-}
-
-
-
 // Register the function as a benchmark
 BENCHMARK(BM_Eigen);
 BENCHMARK(BM_mat);
 BENCHMARK(BM_copy_constructor);
-BENCHMARK(BM_test_dot_mult);
+//BENCHMARK(BM_test_dot_mult);
 // Run the benchmark
 BENCHMARK_MAIN();
