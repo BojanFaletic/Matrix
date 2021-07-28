@@ -6,14 +6,9 @@
 #include <vector>
 #include "matrix_generic.hpp"
 
-class matrix1;
+struct matrix1;
 
-class matrix : public matrix_generic{
-public:
-  // number of zero element in matrix
-  uint32_t sparsity_cnt_n, sparsity_cnt_m;
-
-  uint32_t idx(uint32_t n, uint32_t m) const;
+struct matrix : public matrix_generic{
   void size(uint32_t n, uint32_t m);
 
   static matrix normal_dot(matrix const &a, matrix const &b);
@@ -23,12 +18,10 @@ public:
   static matrix sparse_dot_normal(matrix const &a, matrix const &b);
   static matrix sparse_dot_reverse(matrix const &a, matrix const &b);
 
-  // count number of sparse element
-  static void init_sparsity(matrix &M);
 
-public:
   matrix();
   matrix(matrix const &m);
+  matrix(uint32_t const n, uint32_t const m);
   ~matrix();
   matrix(std::vector<std::vector<float>> const &in_mat);
   matrix(float *data, uint32_t n, uint32_t m);
@@ -43,6 +36,7 @@ public:
   matrix1 flatten() const;
   uint32_t size() const;
   std::array<uint32_t, 2> shape() const;
+  uint32_t shape(uint32_t const axis) const;
 
   matrix &operator=(matrix_generic const &m);
 };

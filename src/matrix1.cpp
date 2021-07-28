@@ -6,22 +6,21 @@
 #include <random>
 #include <sstream>
 
-void matrix1::size(uint32_t m) { dim = {0, 0, 0, m}; }
-
-uint32_t matrix1::idx(uint32_t m) const { return m; }
-
-uint32_t matrix1::size() const { return dim[3]; }
+matrix1::matrix1(uint32_t const m) {
+  size(m);
+  mat = new float[size()];
+}
 
 matrix1::matrix1() {
-  dim = {0, 0, 0, 0};
+  size(0);
   mat = nullptr;
 }
 
 matrix1::matrix1(matrix1 const &m) {
-  size(m.dim[3]);
+  dim = m.dim;
   mat = new float[size()];
   uint32_t it = 0;
-  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
+  this->copy(m);
 }
 
 matrix1::~matrix1() {
@@ -29,39 +28,29 @@ matrix1::~matrix1() {
   mat = nullptr;
 }
 
+void matrix1::size(uint32_t m) { dim = {0, 0, 0, m}; }
+
+std::array<uint32_t, 1> matrix1::shape() const { return {dim[3]}; }
+
 matrix1::matrix1(std::vector<float> const &in_mat) {
   this->size(in_mat.size());
-
   mat = new float[size()];
+
   uint32_t it = 0;
   for (float const &v : in_mat) {
     mat[it++] = v;
   }
 }
 
-void matrix1::operator=(matrix_generic const &m) {
-  this->size(m.dim[3]);
-  delete[] mat;
-  mat = new float[size()];
-  uint32_t it = 0;
-  std::for_each(mat, mat + this->size(), [&](float &f) { f = m.mat[it++]; });
-}
-
 matrix1 matrix1::zeros(uint32_t m) {
-  matrix1 M;
-  M.size(m);
-  M.mat = new float[M.size()];
-
-  std::for_each(M.mat, M.mat + M.size(), [](float &f) { f = 0; });
+  matrix1 M(m);
+  std::fill(M.begin(), M.end(), 0);
   return M;
 }
 
 matrix1 matrix1::ones(uint32_t m) {
-  matrix1 M;
-  M.size(m);
-  M.mat = new float[M.size()];
-
-  std::for_each(M.mat, M.mat + M.size(), [](float &f) { f = 1; });
+  matrix1 M(m);
+  std::fill(M.begin(), M.end(), 1);
   return M;
 }
 
@@ -82,13 +71,11 @@ matrix1 matrix1::random(uint32_t m) {
 matrix matrix1::unsqueeze(uint32_t dim) const {
   matrix M;
   if (dim == 0) {
-    M.size(1, this->dim[3]);
+    M = matrix(1, this->size());
   } else {
-    M.size(this->dim[3], 1);
+    M = matrix(this->size(), 1);
   }
-  M.mat = new float[M.size()];
-  uint32_t idx = 0;
-  std::for_each(M.mat, M.mat + M.size(), [&](float &f) { f = mat[idx++]; });
+  M.copy(*this);
   return M;
 }
 
@@ -97,12 +84,18 @@ matrix matrix1::unsqueeze(uint32_t dim) const {
 /******************************************************************************/
 float matrix1::operator()(uint32_t const n) const { return mat[idx(n)]; }
 
+void matrix1::operator=(matrix_generic const &m) {
+  size(m.shape()[3]);
+  copy(m);
+}
+
 std::ostream &operator<<(std::ostream &out, matrix1 const &M) {
   out << std::setprecision(2);
   out << "[ ";
-  for (uint32_t m = 0; m < M.dim[3]; m++) {
-    out << M(m) << " ";
+  for (uint32_t m = 0; m < M.shape()[0]; m++) {
+    float el = M(m);
+    out << el << " ";
   }
-  out << "]\n";
+  out << "]";
   return out;
 }
