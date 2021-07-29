@@ -192,6 +192,12 @@ matrix &matrix::operator=(matrix_generic const &m) {
   return *this;
 }
 
+void matrix::operator=(matrix_generic &&m) { m.move(*this); }
+
+void matrix::operator=(matrix const &m) {
+  std::cout << "not implemented\n";
+}
+
 float &matrix::operator()(uint32_t const n, uint32_t const m) {
   return mat[idx(n, m)];
 }

@@ -5,3 +5,4 @@ test
 test.cpp
 *.out
 test_dbg
+test_fixed

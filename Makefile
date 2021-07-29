@@ -7,7 +7,7 @@ CEXTRA:=-O2
 CFLAGS:=$(CEXTRA) -march=haswell -std=c++20 -Wall -Wextra -fno-exceptions -DNDEBUG
 CFLAGS_DBG:=-g -march=haswell -std=c++20 -Wall -Wextra
 
-LDFLAGS:=
+LDFLAGS:= -std=c++20
 
 # find all sources in src folder
 SRCS=$(wildcard src/*.cpp)
@@ -28,6 +28,9 @@ UNITTEST_SRC=$(wildcard unittest/*.cpp)
 UNITTESTS=$(UNITTEST_SRC:.cpp=.out)
 unittest: $(UNITTESTS)
 
+# build test with fixed matrix
+test_fixed: test.cpp header/matrix_fixed.hpp
+	clang++ test.cpp -Iheader -std=c++20 -O2 -o test_fixed
 
 
 # build all tests
