@@ -15,5 +15,5 @@ performance increase 57% compared with normal dot product.
 
 ## Building
 ``` shell
-    make test_fixed && ./test_fixed
+make test_fixed && ./test_fixed
 ```
