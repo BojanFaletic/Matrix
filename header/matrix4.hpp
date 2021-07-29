@@ -30,6 +30,8 @@ struct matrix4 : public matrix_generic {
   float operator()(uint32_t const y, uint32_t const z, uint32_t const n,
                    uint32_t const m) const;
   void operator=(matrix_generic const &m);
+  void operator=(matrix_generic &&m);
+  void operator=(matrix4 const &m);
 
   std::array<uint32_t, 4> shape() const;
   uint32_t shape(uint32_t const axis) const;

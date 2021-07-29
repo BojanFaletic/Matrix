@@ -23,11 +23,12 @@ struct matrix3 : public matrix_generic {
   static matrix3 zeros(uint32_t z, uint32_t n, uint32_t m);
   static matrix3 ones(uint32_t z, uint32_t n, uint32_t m);
   static matrix3 random(uint32_t z, uint32_t n, uint32_t m);
-  matrix squeeze(uint32_t dim) const;
   // take index of matrix
   float &operator()(uint32_t const z, uint32_t const n, const uint32_t m);
   float operator()(uint32_t const z, uint32_t const n, const uint32_t m) const;
   void operator=(matrix_generic const &m);
+  void operator=(matrix_generic &&m);
+  void operator=(matrix3 const &m);
 
   std::array<uint32_t, 3> shape() const;
   uint32_t shape(uint32_t const axis) const;

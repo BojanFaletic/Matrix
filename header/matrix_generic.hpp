@@ -32,6 +32,7 @@ public:
   matrix_generic(matrix_generic const &M);
   ~matrix_generic();
   void calculate_sparcity();
+  void reserve(uint32_t const size);
 
   matrix_generic &operator=(matrix_generic const &m);
   bool operator==(matrix_generic const &m);
@@ -68,6 +69,7 @@ public:
 
   // general matrix operations
   void copy(matrix_generic const &m);
+  void move(matrix_generic &m);
   matrix_generic flatten() const;
   // matrix squeeze(uint32_t dim) const;
 };

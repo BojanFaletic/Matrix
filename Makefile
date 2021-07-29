@@ -4,7 +4,7 @@ CC=clang++
 # With this flag you can passs extra arguments for example debug (-g)
 CEXTRA:=-O2
 
-CFLAGS:=$(CEXTRA) -march=haswell -std=c++20 -Wall -Wextra -fno-exceptions
+CFLAGS:=$(CEXTRA) -march=haswell -std=c++20 -Wall -Wextra -fno-exceptions -DNDEBUG
 CFLAGS_DBG:=-g -march=haswell -std=c++20 -Wall -Wextra
 
 LDFLAGS:=
@@ -32,7 +32,7 @@ unittest: $(UNITTESTS)
 
 # build all tests
 $(TESTS): %.out:%.cpp $(OBJS)
-	clang++ $< -Iheader $(OBJS) -lbenchmark -pthread -o $@ -std=c++20 -Wall -Wextra -O2
+	clang++ $< -Iheader $(OBJS) -lbenchmark -pthread -o $@ -std=c++20 -Wall -Wextra -O3
 
 
 # build unit tests

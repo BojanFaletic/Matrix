@@ -6,7 +6,7 @@
 #include <set>
 
 matrix_generic::matrix_generic(matrix_generic const &M) {
-  dim = {M.shape(0), M.shape(1), M.shape(2), M.shape(3)};
+  dim = M.dim;
   mat = new float[size()];
   copy(M);
 }
@@ -61,6 +61,14 @@ void matrix_generic::calculate_sparcity() {
               (uint32_t)m_s.size()};
 }
 
+void matrix_generic::reserve(uint32_t const size) {
+  if (this->size() != size) {
+    delete[] mat;
+    dim = {0, 0, 0, size};
+    mat = new float[this->size()];
+  }
+}
+
 uint32_t matrix_generic::idx(uint32_t y, uint32_t z, uint32_t n,
                              uint32_t m) const {
   uint32_t row_size = dim[3];
@@ -107,6 +115,15 @@ void matrix_generic::copy(matrix_generic const &m) {
   sparsity = m.sparsity;
 }
 
+void matrix_generic::move(matrix_generic &m) {
+  m.dim = dim;
+  m.sparsity = sparsity;
+  m.mat = mat;
+
+  mat = nullptr;
+  dim = {0, 0, 0, 0};
+}
+
 float *matrix_generic::begin() { return &mat[0]; }
 
 float *matrix_generic::end() { return mat + size(); }
@@ -140,46 +157,74 @@ matrix_generic &matrix_generic::operator=(matrix_generic const &m) {
 }
 
 matrix_generic operator*(matrix_generic const &M, float n) {
-  matrix_generic A = M;
-  std::for_each(A.begin(), A.end(), [&](float &f) { f *= n; });
+  matrix_generic A;
+  const uint32_t sz = M.size();
+  A.mat = new float[sz];
+  A.dim = M.dim;
+  A.sparsity = M.sparsity;
+
+  for (uint32_t idx = 0; idx < sz; idx++) {
+    A.mat[idx] = M.mat[idx] * n;
+  }
   return A;
 }
 
 matrix_generic operator*=(matrix_generic &M, float n) {
-  std::for_each(M.begin(), M.end(), [&](float &f) { f *= n; });
+  std::for_each_n(M.begin(), M.size(), [&](float &f) { f *= n; });
   return M;
 }
 
 matrix_generic operator/=(matrix_generic &M, float n) {
-  std::for_each(M.begin(), M.end(), [&](float &f) { f /= n; });
+  std::for_each_n(M.begin(), M.size(), [&](float &f) { f /= n; });
   return M;
 }
 
 matrix_generic operator/(matrix_generic const &M, float n) {
-  matrix_generic A = M;
-  std::for_each(A.begin(), A.end(), [&](float &f) { f *= n; });
+  matrix_generic A;
+  const uint32_t sz = M.size();
+  A.mat = new float[sz];
+  A.dim = M.dim;
+  A.sparsity = M.sparsity;
+
+  for (uint32_t idx = 0; idx < sz; idx++) {
+    A.mat[idx] = M.mat[idx] / n;
+  }
   return A;
 }
 
 matrix_generic operator-(matrix_generic const &M, float n) {
-  matrix_generic A = M;
-  std::for_each(A.begin(), A.end(), [&](float &f) { f -= n; });
+  matrix_generic A;
+  const uint32_t sz = M.size();
+  A.mat = new float[sz];
+  A.dim = M.dim;
+  A.sparsity = M.sparsity;
+
+  for (uint32_t idx = 0; idx < sz; idx++) {
+    A.mat[idx] = M.mat[idx] - n;
+  }
   return A;
 }
 
 matrix_generic operator-=(matrix_generic &M, float n) {
-  std::for_each(M.begin(), M.end(), [&](float &f) { f -= n; });
+  std::for_each_n(M.begin(), M.size(), [&](float &f) { f -= n; });
   return M;
 }
 
 matrix_generic operator+(matrix_generic const &M, float n) {
-  matrix_generic A = M;
-  std::for_each(A.begin(), A.end(), [&](float &f) { f += n; });
+  matrix_generic A;
+  const uint32_t sz = M.size();
+  A.mat = new float[sz];
+  A.dim = M.dim;
+  A.sparsity = M.sparsity;
+
+  for (uint32_t idx = 0; idx < sz; idx++) {
+    A.mat[idx] = M.mat[idx] + n;
+  }
   return A;
 }
 
 matrix_generic operator+=(matrix_generic &M, float n) {
-  std::for_each(M.begin(), M.end(), [&](float &f) { f += n; });
+  std::for_each_n(M.begin(), M.size(), [&](float &f) { f += n; });
   return M;
 }
 

@@ -68,25 +68,26 @@ matrix1 matrix1::random(uint32_t m) {
   return M;
 }
 
-matrix matrix1::unsqueeze(uint32_t dim) const {
-  matrix M;
-  if (dim == 0) {
-    M = matrix(1, this->size());
-  } else {
-    M = matrix(this->size(), 1);
-  }
-  M.copy(*this);
-  return M;
-}
 
 /******************************************************************************/
 /***************************** Operators **************************************/
 /******************************************************************************/
 float matrix1::operator()(uint32_t const n) const { return mat[idx(n)]; }
 
+void matrix1::operator=(matrix_generic &&m) { m.move(*this); }
+
 void matrix1::operator=(matrix_generic const &m) {
   if (size() != m.size()) {
-    size(m.shape(3));
+    size(m.shape(0));
+    delete[] mat;
+    mat = new float[size()];
+  }
+  copy(m);
+}
+
+void matrix1::operator=(matrix1 const &m) {
+  if (size() != m.size()) {
+    size(m.shape(0));
     delete[] mat;
     mat = new float[size()];
   }

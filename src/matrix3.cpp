@@ -65,22 +65,6 @@ matrix3 matrix3::random(uint32_t z, uint32_t n, uint32_t m) {
   return M;
 }
 
-matrix matrix3::squeeze(uint32_t dim) const {
-  if (dim != 0) {
-    std::cout << "not implemented\n;";
-    exit(1);
-  }
-  // this is not implement yet
-  matrix M(shape(1), shape(2) * shape(3));
-  for (uint32_t z = 0; z < this->dim[1]; z++) {
-    for (uint32_t n = 0; n < this->dim[2]; n++) {
-      for (uint32_t m = 0; z < this->dim[3]; m++) {
-        M(z, n * m) = (*this)(z, n, m);
-      }
-    }
-  }
-  return M;
-};
 
 /******************************************************************************/
 /***************************** Operators **************************************/

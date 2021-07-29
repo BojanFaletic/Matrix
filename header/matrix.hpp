@@ -38,7 +38,9 @@ struct matrix : public matrix_generic{
   std::array<uint32_t, 2> shape() const;
   uint32_t shape(uint32_t const axis) const;
 
+  void operator=(matrix_generic &&m);
   matrix &operator=(matrix_generic const &m);
+  void operator=(matrix const &m);
 };
 
 std::ostream &operator<<(std::ostream &out, matrix const &M);
